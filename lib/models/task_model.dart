@@ -63,7 +63,8 @@ class Task {
           title == other.title &&
           description == other.description &&
           status == other.status &&
-          priority == other.priority;
+          priority == other.priority &&
+          teamId == other.teamId;
 
   @override
   int get hashCode =>
@@ -71,5 +72,6 @@ class Task {
       title.hashCode ^
       (description?.hashCode ?? 0) ^
       status.hashCode ^
-      priority.hashCode;
+      priority.hashCode ^
+      teamId.hashCode;
 }

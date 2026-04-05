@@ -102,24 +102,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final previousTasks = _currentTasks;
     final previousTeams = _currentTeams;
 
-    final updatedTasks = previousTasks.map((t) {
-      if (t.id == event.id) {
-        return t.copyWith(
-          title: event.title ?? t.title,
-          description: event.description ?? t.description,
-          status: event.status ?? t.status,
-          priority: event.priority ?? t.priority,
-          teamId: event.teamId ?? t.teamId,
-          assignedTo: event.assignedTo ?? t.assignedTo,
-        );
-      }
-      return t;
-    }).toList();
-
-    emit(TaskState.loaded(tasks: updatedTasks, teams: previousTeams));
-
     try {
-      await _apiService.updateTask(
+      // 1. Perform API update
+      final serverTask = await _apiService.updateTask(
         id: event.id,
         title: event.title,
         description: event.description,
@@ -128,7 +113,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         teamId: event.teamId,
         assignedTo: event.assignedTo,
       );
+
+      // 2. Update local state immediately after success (Requirement 1)
+      // This will trigger UI rebuild (Requirement 3)
+      final updatedTasks = previousTasks.map((t) {
+        return (t.id == serverTask.id) ? serverTask : t;
+      }).toList();
+
+      emit(TaskState.loaded(tasks: updatedTasks, teams: previousTeams));
     } catch (e) {
+      // Restore state and show error if failure
       emit(TaskState.loaded(tasks: previousTasks, teams: previousTeams));
       emit(TaskState.error(message: 'Failed to update task: $e'));
     }

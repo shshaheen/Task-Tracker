@@ -31,8 +31,9 @@ class Team {
       other is Team &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          name == other.name;
+          name == other.name &&
+          description == other.description;
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode;
+  int get hashCode => id.hashCode ^ name.hashCode ^ (description?.hashCode ?? 0);
 }
