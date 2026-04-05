@@ -4,7 +4,6 @@
 *.pyc
 *.swp
 .DS_Store
-.env
 .atom/
 .build/
 .buildlog/
@@ -24,23 +23,23 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
-# Flutter/Dart/Pub related (Targeting the /frontend directory)
+# Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-frontend/.dart_tool/
-frontend/.flutter-plugins
-frontend/.flutter-plugins-dependencies
-frontend/.pub-cache/
-frontend/.pub/
-frontend/build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
 
 # Symbolication related
-frontend/app.*.symbols
+app.*.symbols
 
 # Obfuscation related
-frontend/app.*.map.json
+app.*.map.json
 
 # Android Studio will place build artifacts here
-frontend/android/app/debug/
-frontend/android/app/profile/
-frontend/android/app/release/
+/android/app/debug
+/android/app/profile
+/android/app/release
