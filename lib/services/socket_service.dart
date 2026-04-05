@@ -72,15 +72,22 @@ class SocketService {
     });
 
     _socket.on('taskDeleted', (data) {
-      debugPrint('[SocketService] taskDeleted received');
-      // For deletion, data might be the _id string or a map with _id.
-      final String? id = data is String ? data : data['_id'] as String?;
+      debugPrint('[SocketService] taskDeleted received: $data');
+      final String? id = data is String ? data : (data['id'] as String? ?? data['_id'] as String?);
       if (id != null) {
         taskBloc.add(TaskEvent.taskDeletedLocally(id: id));
       }
     });
 
     _socket.connect();
+  }
+
+  /// Join a specific team room to receive targeted real-time updates.
+  void joinTeam(String teamId) {
+    if (_socket.connected) {
+      _socket.emit('joinTeam', teamId);
+      debugPrint('[SocketService] Joining room: team_$teamId');
+    }
   }
 
   /// Closes the socket and frees resources.

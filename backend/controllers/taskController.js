@@ -17,10 +17,14 @@ const getIO = (req) => {
 /**
  * GET /api/tasks
  * Returns all tasks sorted by creation date (newest first).
+ * Supports filtering by teamId: GET /api/tasks?teamId=...
  */
 const getAllTasks = async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ createdAt: -1 });
+    const { teamId } = req.query;
+    const filter = teamId ? { teamId } : {};
+    
+    const tasks = await Task.find(filter).sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: tasks.length, data: tasks });
   } catch (error) {
     console.error("getAllTasks error:", error.message);
@@ -30,28 +34,39 @@ const getAllTasks = async (req, res) => {
 
 /**
  * POST /api/tasks
- * Creates a new task and broadcasts the "taskCreated" event to all clients.
+ * Creates a new task and broadcasts the "taskCreated" event.
  */
 const createTask = async (req, res) => {
   try {
-    const { title, description, priority, status } = req.body;
+    const { title, description, priority, status, teamId, createdBy, assignedTo } = req.body;
 
     if (!title || !title.trim()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Title is required" });
+      return res.status(400).json({ success: false, message: "Title is required" });
+    }
+    if (!teamId) {
+      return res.status(400).json({ success: false, message: "Team ID is required" });
     }
 
-    const task = await Task.create({ title: title.trim(), description, priority, status });
+    const task = await Task.create({
+      title: title.trim(),
+      description,
+      priority,
+      status,
+      teamId,
+      createdBy,
+      assignedTo
+    });
 
-    // Broadcast to every connected Socket.io client
-    getIO(req).emit("taskCreated", task);
+    const io = getIO(req);
+    // Broadcast to the specifically affected team room
+    io.to(`team_${teamId}`).emit("taskCreated", task);
+    // Also broadcast globally for general UI updates if needed
+    io.emit("taskCreated", task);
 
     res.status(201).json({ success: true, data: task });
   } catch (error) {
     console.error("createTask error:", error.message);
 
-    // Mongoose validation errors (e.g. invalid status enum)
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((e) => e.message);
       return res.status(400).json({ success: false, message: messages.join(", ") });
@@ -63,42 +78,34 @@ const createTask = async (req, res) => {
 
 /**
  * PATCH /api/tasks/:id
- * Updates a task's status and broadcasts the "taskUpdated" event to all clients.
+ * Updates a task and broadcasts the "taskUpdated" event.
  */
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, priority } = req.body;
+    const { title, description, status, priority, teamId, assignedTo } = req.body;
 
-    // Filter fields to only update provided values
     const updateData = {};
     if (title !== undefined) updateData.title = title.trim();
-    if (description !== undefined) updateData.description = description.trim();
+    if (description !== undefined) updateData.description = description ? description.trim() : "";
     if (status !== undefined) updateData.status = status;
     if (priority !== undefined) updateData.priority = priority;
-
-    if (Object.keys(updateData).length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No updatable fields provided" });
-    }
+    if (teamId !== undefined) updateData.teamId = teamId;
+    if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
 
     const task = await Task.findByIdAndUpdate(
       id,
       updateData,
-      {
-        new: true,          // return the updated document
-        runValidators: true // enforce schema enum validation
-      }
+      { new: true, runValidators: true }
     );
 
     if (!task) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Task not found" });
+      return res.status(404).json({ success: false, message: "Task not found" });
     }
 
-    getIO(req).emit("taskUpdated", task);
+    const io = getIO(req);
+    io.to(`team_${task.teamId}`).emit("taskUpdated", task);
+    io.emit("taskUpdated", task);
 
     res.status(200).json({ success: true, data: task });
   } catch (error) {
@@ -119,7 +126,7 @@ const updateTask = async (req, res) => {
 
 /**
  * DELETE /api/tasks/:id
- * Deletes a task and broadcasts the "taskDeleted" event to all clients.
+ * Deletes a task and broadcasts the "taskDeleted" event.
  */
 const deleteTask = async (req, res) => {
   try {
@@ -128,13 +135,12 @@ const deleteTask = async (req, res) => {
     const task = await Task.findByIdAndDelete(id);
 
     if (!task) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Task not found" });
+      return res.status(404).json({ success: false, message: "Task not found" });
     }
 
-    // Send the deleted task's ID so clients can remove it from their local state
-    getIO(req).emit("taskDeleted", { id: task._id });
+    const io = getIO(req);
+    io.to(`team_${task.teamId}`).emit("taskDeleted", { id: task._id });
+    io.emit("taskDeleted", { id: task._id });
 
     res.status(200).json({ success: true, data: { id: task._id } });
   } catch (error) {

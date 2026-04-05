@@ -32,6 +32,17 @@ const taskSchema = new mongoose.Schema(
       },
       default: "medium",
     },
+    teamId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Team",
+      required: [true, "Team ID is required"],
+    },
+    createdBy: {
+      type: String,
+    },
+    assignedTo: {
+      type: String,
+    },
   },
   {
     // Automatically manages createdAt and updatedAt fields

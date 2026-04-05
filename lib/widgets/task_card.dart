@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
+import '../bloc/task_state.dart';
 import '../models/task_model.dart';
+import '../models/team_model.dart';
 import 'board_scroll_provider.dart';
 import 'task_form_dialog.dart';
 import 'task_view_dialog.dart';
@@ -305,9 +307,18 @@ class _CardBody extends StatelessWidget {
                           builder: (_) => TaskViewDialog(task: task),
                         );
                       } else if (value == 'edit') {
-                        showDialog(
+                        final state = context.read<TaskBloc>().state;
+                        final teams = state is TaskLoaded ? state.teams : <Team>[];
+                        showModalBottomSheet(
                           context: context,
-                          builder: (_) => TaskFormDialog(taskToEdit: task),
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                          ),
+                          builder: (_) => TaskFormDialog(
+                            taskToEdit: task,
+                            teams: teams,
+                          ),
                         );
                       } else if (value == 'delete') {
                         _showDeleteConfirmation(context);

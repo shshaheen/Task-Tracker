@@ -125,12 +125,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Task> tasks)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Task> tasks,  List<Team> teams)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case TaskInitial() when initial != null:
 return initial();case TaskLoading() when loading != null:
 return loading();case TaskLoaded() when loaded != null:
-return loaded(_that.tasks);case TaskError() when error != null:
+return loaded(_that.tasks,_that.teams);case TaskError() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -149,12 +149,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Task> tasks)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Task> tasks,  List<Team> teams)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case TaskInitial():
 return initial();case TaskLoading():
 return loading();case TaskLoaded():
-return loaded(_that.tasks);case TaskError():
+return loaded(_that.tasks,_that.teams);case TaskError():
 return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +169,12 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Task> tasks)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Task> tasks,  List<Team> teams)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case TaskInitial() when initial != null:
 return initial();case TaskLoading() when loading != null:
 return loading();case TaskLoaded() when loaded != null:
-return loaded(_that.tasks);case TaskError() when error != null:
+return loaded(_that.tasks,_that.teams);case TaskError() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -251,7 +251,7 @@ String toString() {
 
 
 class TaskLoaded implements TaskState {
-  const TaskLoaded({required final  List<Task> tasks}): _tasks = tasks;
+  const TaskLoaded({required final  List<Task> tasks, required final  List<Team> teams}): _tasks = tasks,_teams = teams;
   
 
  final  List<Task> _tasks;
@@ -259,6 +259,13 @@ class TaskLoaded implements TaskState {
   if (_tasks is EqualUnmodifiableListView) return _tasks;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tasks);
+}
+
+ final  List<Team> _teams;
+ List<Team> get teams {
+  if (_teams is EqualUnmodifiableListView) return _teams;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_teams);
 }
 
 
@@ -272,16 +279,16 @@ $TaskLoadedCopyWith<TaskLoaded> get copyWith => _$TaskLoadedCopyWithImpl<TaskLoa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskLoaded&&const DeepCollectionEquality().equals(other._tasks, _tasks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskLoaded&&const DeepCollectionEquality().equals(other._tasks, _tasks)&&const DeepCollectionEquality().equals(other._teams, _teams));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_tasks));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_tasks),const DeepCollectionEquality().hash(_teams));
 
 @override
 String toString() {
-  return 'TaskState.loaded(tasks: $tasks)';
+  return 'TaskState.loaded(tasks: $tasks, teams: $teams)';
 }
 
 
@@ -292,7 +299,7 @@ abstract mixin class $TaskLoadedCopyWith<$Res> implements $TaskStateCopyWith<$Re
   factory $TaskLoadedCopyWith(TaskLoaded value, $Res Function(TaskLoaded) _then) = _$TaskLoadedCopyWithImpl;
 @useResult
 $Res call({
- List<Task> tasks
+ List<Task> tasks, List<Team> teams
 });
 
 
@@ -309,10 +316,11 @@ class _$TaskLoadedCopyWithImpl<$Res>
 
 /// Create a copy of TaskState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? tasks = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? tasks = null,Object? teams = null,}) {
   return _then(TaskLoaded(
 tasks: null == tasks ? _self._tasks : tasks // ignore: cast_nullable_to_non_nullable
-as List<Task>,
+as List<Task>,teams: null == teams ? _self._teams : teams // ignore: cast_nullable_to_non_nullable
+as List<Team>,
   ));
 }
 

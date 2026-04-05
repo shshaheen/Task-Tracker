@@ -4,23 +4,31 @@ class Task {
   final String? description;
   final String status;
   final String priority;
+  final String teamId;
+  final String? createdBy;
+  final String? assignedTo;
 
   const Task({
     required this.id,
     required this.title,
     this.description,
     required this.status,
-    this.priority = 'medium',
+    required this.priority,
+    required this.teamId,
+    this.createdBy,
+    this.assignedTo,
   });
 
-  /// Parses a task from the JSON object returned by the backend.
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json['_id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String?,
-      status: json['status'] as String,
-      priority: json['priority'] as String? ?? 'medium',
+      id: (json['_id'] ?? '').toString(),
+      title: (json['title'] ?? 'Untitled Task').toString(),
+      description: json['description']?.toString(),
+      status: (json['status'] ?? 'todo').toString(),
+      priority: (json['priority'] ?? 'medium').toString(),
+      teamId: (json['teamId'] ?? '').toString(),
+      createdBy: json['createdBy']?.toString(),
+      assignedTo: json['assignedTo']?.toString(),
     );
   }
 
@@ -30,6 +38,9 @@ class Task {
     String? description,
     String? status,
     String? priority,
+    String? teamId,
+    String? createdBy,
+    String? assignedTo,
   }) {
     return Task(
       id: id ?? this.id,
@@ -37,6 +48,9 @@ class Task {
       description: description ?? this.description,
       status: status ?? this.status,
       priority: priority ?? this.priority,
+      teamId: teamId ?? this.teamId,
+      createdBy: createdBy ?? this.createdBy,
+      assignedTo: assignedTo ?? this.assignedTo,
     );
   }
 

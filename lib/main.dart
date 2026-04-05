@@ -54,35 +54,40 @@ class _TaskTrackerAppState extends State<TaskTrackerApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _taskBloc,
-      child: MaterialApp(
-        title: 'Task Tracker',
-        debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.system, // Dynamically follow device setting
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF2563EB),
-            brightness: Brightness.light,
-            surface: const Color(0xFFFFFFFF),
-            surfaceContainer: const Color(0xFFF1F5F9), // Light blue-grey for columns
-            onSurface: const Color(0xFF1E293B),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _taskBloc),
+      ],
+      child: RepositoryProvider.value(
+        value: _socketService,
+        child: MaterialApp(
+          title: 'Task Tracker',
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.system, // Dynamically follow device setting
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF2563EB),
+              brightness: Brightness.light,
+              surface: const Color(0xFFFFFFFF),
+              surfaceContainer: const Color(0xFFF1F5F9), // Light blue-grey for columns
+              onSurface: const Color(0xFF1E293B),
+            ),
+            scaffoldBackgroundColor: const Color(0xFFF8FAFC), // Very light grey
           ),
-          scaffoldBackgroundColor: const Color(0xFFF8FAFC), // Very light grey
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF3B82F6),
-            brightness: Brightness.dark,
-            surface: const Color(0xFF1E293B), // Card color
-            surfaceContainer: const Color(0xFF0F172A), // Column background
-            onSurface: const Color(0xFFF8FAFC),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF3B82F6),
+              brightness: Brightness.dark,
+              surface: const Color(0xFF1E293B), // Card color
+              surfaceContainer: const Color(0xFF0F172A), // Column background
+              onSurface: const Color(0xFFF8FAFC),
+            ),
+            scaffoldBackgroundColor: const Color(0xFF020617), // Deepest dark
           ),
-          scaffoldBackgroundColor: const Color(0xFF020617), // Deepest dark
+          home: const HomeScreen(),
         ),
-        home: const HomeScreen(),
       ),
     );
   }

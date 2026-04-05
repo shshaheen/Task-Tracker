@@ -55,14 +55,15 @@ extension TaskEventPatterns on TaskEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTasks value)?  fetchTasks,TResult Function( AddTask value)?  addTask,TResult Function( UpdateTask value)?  updateTask,TResult Function( DeleteTask value)?  deleteTask,TResult Function( TaskAddedLocally value)?  taskAddedLocally,TResult Function( TaskUpdatedLocally value)?  taskUpdatedLocally,TResult Function( TaskDeletedLocally value)?  taskDeletedLocally,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTasks value)?  fetchTasks,TResult Function( AddTask value)?  addTask,TResult Function( UpdateTask value)?  updateTask,TResult Function( DeleteTask value)?  deleteTask,TResult Function( CreateTeam value)?  createTeam,TResult Function( TaskAddedLocally value)?  taskAddedLocally,TResult Function( TaskUpdatedLocally value)?  taskUpdatedLocally,TResult Function( TaskDeletedLocally value)?  taskDeletedLocally,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks(_that);case AddTask() when addTask != null:
 return addTask(_that);case UpdateTask() when updateTask != null:
 return updateTask(_that);case DeleteTask() when deleteTask != null:
-return deleteTask(_that);case TaskAddedLocally() when taskAddedLocally != null:
+return deleteTask(_that);case CreateTeam() when createTeam != null:
+return createTeam(_that);case TaskAddedLocally() when taskAddedLocally != null:
 return taskAddedLocally(_that);case TaskUpdatedLocally() when taskUpdatedLocally != null:
 return taskUpdatedLocally(_that);case TaskDeletedLocally() when taskDeletedLocally != null:
 return taskDeletedLocally(_that);case _:
@@ -83,14 +84,15 @@ return taskDeletedLocally(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTasks value)  fetchTasks,required TResult Function( AddTask value)  addTask,required TResult Function( UpdateTask value)  updateTask,required TResult Function( DeleteTask value)  deleteTask,required TResult Function( TaskAddedLocally value)  taskAddedLocally,required TResult Function( TaskUpdatedLocally value)  taskUpdatedLocally,required TResult Function( TaskDeletedLocally value)  taskDeletedLocally,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTasks value)  fetchTasks,required TResult Function( AddTask value)  addTask,required TResult Function( UpdateTask value)  updateTask,required TResult Function( DeleteTask value)  deleteTask,required TResult Function( CreateTeam value)  createTeam,required TResult Function( TaskAddedLocally value)  taskAddedLocally,required TResult Function( TaskUpdatedLocally value)  taskUpdatedLocally,required TResult Function( TaskDeletedLocally value)  taskDeletedLocally,}){
 final _that = this;
 switch (_that) {
 case FetchTasks():
 return fetchTasks(_that);case AddTask():
 return addTask(_that);case UpdateTask():
 return updateTask(_that);case DeleteTask():
-return deleteTask(_that);case TaskAddedLocally():
+return deleteTask(_that);case CreateTeam():
+return createTeam(_that);case TaskAddedLocally():
 return taskAddedLocally(_that);case TaskUpdatedLocally():
 return taskUpdatedLocally(_that);case TaskDeletedLocally():
 return taskDeletedLocally(_that);}
@@ -107,14 +109,15 @@ return taskDeletedLocally(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTasks value)?  fetchTasks,TResult? Function( AddTask value)?  addTask,TResult? Function( UpdateTask value)?  updateTask,TResult? Function( DeleteTask value)?  deleteTask,TResult? Function( TaskAddedLocally value)?  taskAddedLocally,TResult? Function( TaskUpdatedLocally value)?  taskUpdatedLocally,TResult? Function( TaskDeletedLocally value)?  taskDeletedLocally,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTasks value)?  fetchTasks,TResult? Function( AddTask value)?  addTask,TResult? Function( UpdateTask value)?  updateTask,TResult? Function( DeleteTask value)?  deleteTask,TResult? Function( CreateTeam value)?  createTeam,TResult? Function( TaskAddedLocally value)?  taskAddedLocally,TResult? Function( TaskUpdatedLocally value)?  taskUpdatedLocally,TResult? Function( TaskDeletedLocally value)?  taskDeletedLocally,}){
 final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks(_that);case AddTask() when addTask != null:
 return addTask(_that);case UpdateTask() when updateTask != null:
 return updateTask(_that);case DeleteTask() when deleteTask != null:
-return deleteTask(_that);case TaskAddedLocally() when taskAddedLocally != null:
+return deleteTask(_that);case CreateTeam() when createTeam != null:
+return createTeam(_that);case TaskAddedLocally() when taskAddedLocally != null:
 return taskAddedLocally(_that);case TaskUpdatedLocally() when taskUpdatedLocally != null:
 return taskUpdatedLocally(_that);case TaskDeletedLocally() when taskDeletedLocally != null:
 return taskDeletedLocally(_that);case _:
@@ -134,13 +137,14 @@ return taskDeletedLocally(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchTasks,TResult Function( String title,  String? description,  String? priority)?  addTask,TResult Function( String id,  String? title,  String? description,  String? status,  String? priority)?  updateTask,TResult Function( String id)?  deleteTask,TResult Function( Task task)?  taskAddedLocally,TResult Function( Task task)?  taskUpdatedLocally,TResult Function( String id)?  taskDeletedLocally,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchTasks,TResult Function( String title,  String teamId,  String? description,  String? priority,  String? assignedTo)?  addTask,TResult Function( String id,  String? title,  String? description,  String? status,  String? priority,  String? teamId,  String? assignedTo)?  updateTask,TResult Function( String id)?  deleteTask,TResult Function( String name,  String? description)?  createTeam,TResult Function( Task task)?  taskAddedLocally,TResult Function( Task task)?  taskUpdatedLocally,TResult Function( String id)?  taskDeletedLocally,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks();case AddTask() when addTask != null:
-return addTask(_that.title,_that.description,_that.priority);case UpdateTask() when updateTask != null:
-return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority);case DeleteTask() when deleteTask != null:
-return deleteTask(_that.id);case TaskAddedLocally() when taskAddedLocally != null:
+return addTask(_that.title,_that.teamId,_that.description,_that.priority,_that.assignedTo);case UpdateTask() when updateTask != null:
+return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.teamId,_that.assignedTo);case DeleteTask() when deleteTask != null:
+return deleteTask(_that.id);case CreateTeam() when createTeam != null:
+return createTeam(_that.name,_that.description);case TaskAddedLocally() when taskAddedLocally != null:
 return taskAddedLocally(_that.task);case TaskUpdatedLocally() when taskUpdatedLocally != null:
 return taskUpdatedLocally(_that.task);case TaskDeletedLocally() when taskDeletedLocally != null:
 return taskDeletedLocally(_that.id);case _:
@@ -161,13 +165,14 @@ return taskDeletedLocally(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchTasks,required TResult Function( String title,  String? description,  String? priority)  addTask,required TResult Function( String id,  String? title,  String? description,  String? status,  String? priority)  updateTask,required TResult Function( String id)  deleteTask,required TResult Function( Task task)  taskAddedLocally,required TResult Function( Task task)  taskUpdatedLocally,required TResult Function( String id)  taskDeletedLocally,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchTasks,required TResult Function( String title,  String teamId,  String? description,  String? priority,  String? assignedTo)  addTask,required TResult Function( String id,  String? title,  String? description,  String? status,  String? priority,  String? teamId,  String? assignedTo)  updateTask,required TResult Function( String id)  deleteTask,required TResult Function( String name,  String? description)  createTeam,required TResult Function( Task task)  taskAddedLocally,required TResult Function( Task task)  taskUpdatedLocally,required TResult Function( String id)  taskDeletedLocally,}) {final _that = this;
 switch (_that) {
 case FetchTasks():
 return fetchTasks();case AddTask():
-return addTask(_that.title,_that.description,_that.priority);case UpdateTask():
-return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority);case DeleteTask():
-return deleteTask(_that.id);case TaskAddedLocally():
+return addTask(_that.title,_that.teamId,_that.description,_that.priority,_that.assignedTo);case UpdateTask():
+return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.teamId,_that.assignedTo);case DeleteTask():
+return deleteTask(_that.id);case CreateTeam():
+return createTeam(_that.name,_that.description);case TaskAddedLocally():
 return taskAddedLocally(_that.task);case TaskUpdatedLocally():
 return taskUpdatedLocally(_that.task);case TaskDeletedLocally():
 return taskDeletedLocally(_that.id);}
@@ -184,13 +189,14 @@ return taskDeletedLocally(_that.id);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchTasks,TResult? Function( String title,  String? description,  String? priority)?  addTask,TResult? Function( String id,  String? title,  String? description,  String? status,  String? priority)?  updateTask,TResult? Function( String id)?  deleteTask,TResult? Function( Task task)?  taskAddedLocally,TResult? Function( Task task)?  taskUpdatedLocally,TResult? Function( String id)?  taskDeletedLocally,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchTasks,TResult? Function( String title,  String teamId,  String? description,  String? priority,  String? assignedTo)?  addTask,TResult? Function( String id,  String? title,  String? description,  String? status,  String? priority,  String? teamId,  String? assignedTo)?  updateTask,TResult? Function( String id)?  deleteTask,TResult? Function( String name,  String? description)?  createTeam,TResult? Function( Task task)?  taskAddedLocally,TResult? Function( Task task)?  taskUpdatedLocally,TResult? Function( String id)?  taskDeletedLocally,}) {final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks();case AddTask() when addTask != null:
-return addTask(_that.title,_that.description,_that.priority);case UpdateTask() when updateTask != null:
-return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority);case DeleteTask() when deleteTask != null:
-return deleteTask(_that.id);case TaskAddedLocally() when taskAddedLocally != null:
+return addTask(_that.title,_that.teamId,_that.description,_that.priority,_that.assignedTo);case UpdateTask() when updateTask != null:
+return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.teamId,_that.assignedTo);case DeleteTask() when deleteTask != null:
+return deleteTask(_that.id);case CreateTeam() when createTeam != null:
+return createTeam(_that.name,_that.description);case TaskAddedLocally() when taskAddedLocally != null:
 return taskAddedLocally(_that.task);case TaskUpdatedLocally() when taskUpdatedLocally != null:
 return taskUpdatedLocally(_that.task);case TaskDeletedLocally() when taskDeletedLocally != null:
 return taskDeletedLocally(_that.id);case _:
@@ -237,12 +243,14 @@ String toString() {
 
 
 class AddTask implements TaskEvent {
-  const AddTask({required this.title, this.description, this.priority});
+  const AddTask({required this.title, required this.teamId, this.description, this.priority, this.assignedTo});
   
 
  final  String title;
+ final  String teamId;
  final  String? description;
  final  String? priority;
+ final  String? assignedTo;
 
 /// Create a copy of TaskEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -254,16 +262,16 @@ $AddTaskCopyWith<AddTask> get copyWith => _$AddTaskCopyWithImpl<AddTask>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddTask&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.priority, priority) || other.priority == priority));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddTask&&(identical(other.title, title) || other.title == title)&&(identical(other.teamId, teamId) || other.teamId == teamId)&&(identical(other.description, description) || other.description == description)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.assignedTo, assignedTo) || other.assignedTo == assignedTo));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,priority);
+int get hashCode => Object.hash(runtimeType,title,teamId,description,priority,assignedTo);
 
 @override
 String toString() {
-  return 'TaskEvent.addTask(title: $title, description: $description, priority: $priority)';
+  return 'TaskEvent.addTask(title: $title, teamId: $teamId, description: $description, priority: $priority, assignedTo: $assignedTo)';
 }
 
 
@@ -274,7 +282,7 @@ abstract mixin class $AddTaskCopyWith<$Res> implements $TaskEventCopyWith<$Res> 
   factory $AddTaskCopyWith(AddTask value, $Res Function(AddTask) _then) = _$AddTaskCopyWithImpl;
 @useResult
 $Res call({
- String title, String? description, String? priority
+ String title, String teamId, String? description, String? priority, String? assignedTo
 });
 
 
@@ -291,11 +299,13 @@ class _$AddTaskCopyWithImpl<$Res>
 
 /// Create a copy of TaskEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? priority = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? title = null,Object? teamId = null,Object? description = freezed,Object? priority = freezed,Object? assignedTo = freezed,}) {
   return _then(AddTask(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,teamId: null == teamId ? _self.teamId : teamId // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,priority: freezed == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
+as String?,assignedTo: freezed == assignedTo ? _self.assignedTo : assignedTo // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -307,7 +317,7 @@ as String?,
 
 
 class UpdateTask implements TaskEvent {
-  const UpdateTask({required this.id, this.title, this.description, this.status, this.priority});
+  const UpdateTask({required this.id, this.title, this.description, this.status, this.priority, this.teamId, this.assignedTo});
   
 
  final  String id;
@@ -315,6 +325,8 @@ class UpdateTask implements TaskEvent {
  final  String? description;
  final  String? status;
  final  String? priority;
+ final  String? teamId;
+ final  String? assignedTo;
 
 /// Create a copy of TaskEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -326,16 +338,16 @@ $UpdateTaskCopyWith<UpdateTask> get copyWith => _$UpdateTaskCopyWithImpl<UpdateT
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateTask&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateTask&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.teamId, teamId) || other.teamId == teamId)&&(identical(other.assignedTo, assignedTo) || other.assignedTo == assignedTo));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,status,priority);
+int get hashCode => Object.hash(runtimeType,id,title,description,status,priority,teamId,assignedTo);
 
 @override
 String toString() {
-  return 'TaskEvent.updateTask(id: $id, title: $title, description: $description, status: $status, priority: $priority)';
+  return 'TaskEvent.updateTask(id: $id, title: $title, description: $description, status: $status, priority: $priority, teamId: $teamId, assignedTo: $assignedTo)';
 }
 
 
@@ -346,7 +358,7 @@ abstract mixin class $UpdateTaskCopyWith<$Res> implements $TaskEventCopyWith<$Re
   factory $UpdateTaskCopyWith(UpdateTask value, $Res Function(UpdateTask) _then) = _$UpdateTaskCopyWithImpl;
 @useResult
 $Res call({
- String id, String? title, String? description, String? status, String? priority
+ String id, String? title, String? description, String? status, String? priority, String? teamId, String? assignedTo
 });
 
 
@@ -363,13 +375,15 @@ class _$UpdateTaskCopyWithImpl<$Res>
 
 /// Create a copy of TaskEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? status = freezed,Object? priority = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? status = freezed,Object? priority = freezed,Object? teamId = freezed,Object? assignedTo = freezed,}) {
   return _then(UpdateTask(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String?,priority: freezed == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
+as String?,teamId: freezed == teamId ? _self.teamId : teamId // ignore: cast_nullable_to_non_nullable
+as String?,assignedTo: freezed == assignedTo ? _self.assignedTo : assignedTo // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -437,6 +451,74 @@ class _$DeleteTaskCopyWithImpl<$Res>
   return _then(DeleteTask(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CreateTeam implements TaskEvent {
+  const CreateTeam({required this.name, this.description});
+  
+
+ final  String name;
+ final  String? description;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CreateTeamCopyWith<CreateTeam> get copyWith => _$CreateTeamCopyWithImpl<CreateTeam>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateTeam&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,name,description);
+
+@override
+String toString() {
+  return 'TaskEvent.createTeam(name: $name, description: $description)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CreateTeamCopyWith<$Res> implements $TaskEventCopyWith<$Res> {
+  factory $CreateTeamCopyWith(CreateTeam value, $Res Function(CreateTeam) _then) = _$CreateTeamCopyWithImpl;
+@useResult
+$Res call({
+ String name, String? description
+});
+
+
+
+
+}
+/// @nodoc
+class _$CreateTeamCopyWithImpl<$Res>
+    implements $CreateTeamCopyWith<$Res> {
+  _$CreateTeamCopyWithImpl(this._self, this._then);
+
+  final CreateTeam _self;
+  final $Res Function(CreateTeam) _then;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? name = null,Object? description = freezed,}) {
+  return _then(CreateTeam(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

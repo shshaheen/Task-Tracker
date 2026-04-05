@@ -27,8 +27,11 @@ class KanbanColumn extends StatelessWidget {
   /// Accent colour used for the header and the drag-hover highlight.
   final Color color;
 
-  /// The full unfiltered task list — the column filters by [status] internally.
+  /// Filtered tasks for THIS column.
   final List<Task> tasks;
+
+  /// The ID of the team this column belongs to.
+  final String teamId;
 
   const KanbanColumn({
     super.key,
@@ -36,23 +39,24 @@ class KanbanColumn extends StatelessWidget {
     required this.status,
     required this.color,
     required this.tasks,
+    required this.teamId,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Filter here so the parent (HomeScreen) can pass the full list to every
-    // column without needing to know about individual statuses.
+    // Filter by status.
     final columnTasks = tasks.where((t) => t.status == status).toList();
 
     return DragTarget<Task>(
-      // Only accept cards that are not already in this column.
       onWillAcceptWithDetails: (details) => details.data.status != status,
-
-      // On drop: move the task to this column's status via the BLoC.
       onAcceptWithDetails: (details) {
         context.read<TaskBloc>().add(
-          TaskEvent.updateTask(id: details.data.id, status: status),
-        );
+              TaskEvent.updateTask(
+                id: details.data.id,
+                status: status,
+                teamId: teamId, // Ensure it stays in this team or updates if moving across
+              ),
+            );
       },
 
       builder: (context, candidateData, _) {

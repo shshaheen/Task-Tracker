@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/task_model.dart';
+import '../models/team_model.dart';
 import '../services/task_api_service.dart';
 import 'task_event.dart';
 import 'task_state.dart';
@@ -32,25 +33,30 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       (event, emit) => _handleLocalUpdate(event.task, emit),
     );
     on<TaskDeletedLocally>((event, emit) => _handleLocalDelete(event.id, emit));
+    on<CreateTeam>(_onCreateTeam);
   }
 
   // ── FetchTasks ─────────────────────────────────────────────────────────────
 
   Future<void> _onFetchTasks(FetchTasks event, Emitter<TaskState> emit) async {
-    // ONLY show global loading on the very first load.
     if (state is TaskInitial) {
       emit(const TaskState.loading());
     }
 
     try {
-      final tasks = await _apiService.fetchTasks();
-      emit(TaskState.loaded(tasks: tasks));
+      final results = await Future.wait([
+        _apiService.fetchTeams(),
+        _apiService.fetchTasks(),
+      ]);
+
+      final teams = results[0] as List<Team>;
+      final tasks = results[1] as List<Task>;
+
+      emit(TaskState.loaded(tasks: tasks, teams: teams));
     } on DioException catch (e) {
       emit(TaskState.error(message: _formatDioError(e)));
-      // If we already had tasks, stay in Loaded state with those tasks
-      // so the board doesn't disappear.
       if (_currentTasks.isNotEmpty) {
-        emit(TaskState.loaded(tasks: _currentTasks));
+        emit(TaskState.loaded(tasks: _currentTasks, teams: _currentTeams));
       }
     } catch (e) {
       emit(TaskState.error(message: 'Unexpected error: $e'));
@@ -61,32 +67,31 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onAddTask(AddTask event, Emitter<TaskState> emit) async {
     final previousTasks = _currentTasks;
+    final previousTeams = _currentTeams;
 
-    // 1. Optimistic Update: Add a temporary task to the UI.
+    // 1. Optimistic Update
     final tempTask = Task(
       id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
       title: event.title,
       description: event.description ?? '',
       status: 'todo',
       priority: event.priority ?? 'medium',
+      teamId: event.teamId,
+      assignedTo: event.assignedTo,
     );
 
-    emit(TaskState.loaded(tasks: [...previousTasks, tempTask]));
+    emit(TaskState.loaded(tasks: [...previousTasks, tempTask], teams: previousTeams));
 
     try {
-      // 2. Perform API call.
       await _apiService.createTask(
         title: event.title,
+        teamId: event.teamId,
         description: event.description,
         priority: event.priority,
+        assignedTo: event.assignedTo,
       );
-      // 3. Instead of refetching everything, we wait for the Socket event
-      // or we could refetch silently. The requirement says "Socket updates should
-      // update the existing state without triggering a full reload."
-      // So we'll let Socket handle the official insertion.
     } catch (e) {
-      // 4. Revert on error.
-      emit(TaskState.loaded(tasks: previousTasks));
+      emit(TaskState.loaded(tasks: previousTasks, teams: previousTeams));
       emit(TaskState.error(message: 'Failed to add task: $e'));
     }
   }
@@ -95,8 +100,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onUpdateTask(UpdateTask event, Emitter<TaskState> emit) async {
     final previousTasks = _currentTasks;
+    final previousTeams = _currentTeams;
 
-    // 1. Optimistic Update: Update the task in the list immediately.
     final updatedTasks = previousTasks.map((t) {
       if (t.id == event.id) {
         return t.copyWith(
@@ -104,12 +109,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           description: event.description ?? t.description,
           status: event.status ?? t.status,
           priority: event.priority ?? t.priority,
+          teamId: event.teamId ?? t.teamId,
+          assignedTo: event.assignedTo ?? t.assignedTo,
         );
       }
       return t;
     }).toList();
 
-    emit(TaskState.loaded(tasks: updatedTasks));
+    emit(TaskState.loaded(tasks: updatedTasks, teams: previousTeams));
 
     try {
       await _apiService.updateTask(
@@ -118,10 +125,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         description: event.description,
         status: event.status,
         priority: event.priority,
+        teamId: event.teamId,
+        assignedTo: event.assignedTo,
       );
     } catch (e) {
-      // Revert on error.
-      emit(TaskState.loaded(tasks: previousTasks));
+      emit(TaskState.loaded(tasks: previousTasks, teams: previousTeams));
       emit(TaskState.error(message: 'Failed to update task: $e'));
     }
   }
@@ -130,16 +138,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onDeleteTask(DeleteTask event, Emitter<TaskState> emit) async {
     final previousTasks = _currentTasks;
+    final previousTeams = _currentTeams;
 
-    // 1. Optimistic Update: Remove from list immediately.
     final updatedTasks = previousTasks.where((t) => t.id != event.id).toList();
-    emit(TaskState.loaded(tasks: updatedTasks));
+    emit(TaskState.loaded(tasks: updatedTasks, teams: previousTeams));
 
     try {
       await _apiService.deleteTask(event.id);
     } catch (e) {
-      // Revert on error.
-      emit(TaskState.loaded(tasks: previousTasks));
+      emit(TaskState.loaded(tasks: previousTasks, teams: previousTeams));
       emit(TaskState.error(message: 'Failed to delete task: $e'));
     }
   }
@@ -147,34 +154,58 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   // ── Local Sync Handlers ────────────────────────────────────────────────────
 
   void _handleLocalAdd(Task task, Emitter<TaskState> emit) {
-    final tasks = _currentTasks;
-    // Don't add if already exists (avoids duplicates with optimistic UI)
-    if (tasks.any((t) => t.id == task.id)) return;
+    if (_currentTasks.any((t) => t.id == task.id)) return;
 
-    // Remove any temp tasks that match this one (if we had a way to correlate,
-    // usually by title/description for new tasks)
-    final filtered = tasks.where((t) => !t.id.startsWith('temp-')).toList();
-    emit(TaskState.loaded(tasks: [...filtered, task]));
+    final filtered = _currentTasks.where((t) => !t.id.startsWith('temp-')).toList();
+    emit(TaskState.loaded(tasks: [...filtered, task], teams: _currentTeams));
   }
 
   void _handleLocalUpdate(Task task, Emitter<TaskState> emit) {
     final updated = _currentTasks
         .map((t) => t.id == task.id ? task : t)
         .toList();
-    emit(TaskState.loaded(tasks: updated));
+    emit(TaskState.loaded(tasks: updated, teams: _currentTeams));
   }
 
   void _handleLocalDelete(String id, Emitter<TaskState> emit) {
     final updated = _currentTasks.where((t) => t.id != id).toList();
-    emit(TaskState.loaded(tasks: updated));
+    emit(TaskState.loaded(tasks: updated, teams: _currentTeams));
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  /// Returns the task list from the current [TaskLoaded] state,
-  /// or an empty list if the state is not [TaskLoaded].
   List<Task> get _currentTasks =>
       state is TaskLoaded ? (state as TaskLoaded).tasks : <Task>[];
+
+  List<Team> get _currentTeams =>
+      state is TaskLoaded ? (state as TaskLoaded).teams : <Team>[];
+
+  Future<void> _onCreateTeam(CreateTeam event, Emitter<TaskState> emit) async {
+    final previousTasks = _currentTasks;
+    final previousTeams = _currentTeams;
+
+    // 1. Optimistic Update
+    final tempTeam = Team(
+      id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
+      name: event.name,
+      description: event.description,
+    );
+
+    emit(TaskState.loaded(tasks: previousTasks, teams: [...previousTeams, tempTeam]));
+
+    try {
+      await _apiService.createTeam(
+        name: event.name,
+        description: event.description,
+      );
+      // We don't need to manually add the result because most of the time we'll 
+      // trigger a fetch or use Socket.IO but for simplicity here we refetch:
+      add(const TaskEvent.fetchTasks());
+    } catch (e) {
+      emit(TaskState.loaded(tasks: previousTasks, teams: previousTeams));
+      emit(TaskState.error(message: 'Failed to create team: $e'));
+    }
+  }
 
   /// Converts a [DioException] into a human-readable string for the UI.
   String _formatDioError(DioException e) {

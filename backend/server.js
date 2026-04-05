@@ -8,25 +8,32 @@ const { Server } = require("socket.io");
 const connectDB = require("./config/db");
 const taskRoutes = require("./routes/taskRoutes");
 
+const teamRoutes = require("./routes/teamRoutes");
+
 // ─── App & Server Setup ─────────────────────────────────────────────────────
 
 const app = express();
-const httpServer = http.createServer(app); // Wrap Express in a plain HTTP server so Socket.io can share the same port
+const httpServer = http.createServer(app); 
 
 // ─── Socket.io ──────────────────────────────────────────────────────────────
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",      // Allow all origins — tighten this in production
+    origin: "*",      
     methods: ["GET", "POST", "PATCH", "DELETE"],
   },
 });
 
-// Attach the io instance to the Express app so controllers can access it via req.app.get("io")
 app.set("io", io);
 
 io.on("connection", (socket) => {
   console.log(`🔌  Socket connected:    ${socket.id}`);
+
+  // Join a team-specific room for targeted updates
+  socket.on("joinTeam", (teamId) => {
+    socket.join(`team_${teamId}`);
+    console.log(`👥  Socket ${socket.id} joined team_${teamId}`);
+  });
 
   socket.on("disconnect", () => {
     console.log(`🔌  Socket disconnected: ${socket.id}`);
@@ -37,7 +44,7 @@ io.on("connection", (socket) => {
 
 app.use(
   cors({
-    origin: "*", // Allow all origins — tighten this in production
+    origin: "*",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -54,6 +61,7 @@ app.get("/health", (_req, res) => {
 // ─── API Routes ──────────────────────────────────────────────────────────────
 
 app.use("/api/tasks", taskRoutes);
+app.use("/api/teams", teamRoutes);
 
 // ─── 404 Catch-All ───────────────────────────────────────────────────────────
 
