@@ -1,10 +1,3 @@
-// ---------------------------------------------------------------------------
-// Task — Immutable data class
-//
-// No json_serializable / json_annotation used.
-// fromJson is written by hand and maps MongoDB's "_id" field to [id].
-// ---------------------------------------------------------------------------
-
 class Task {
   final String id;
   final String title;
@@ -21,8 +14,6 @@ class Task {
   });
 
   /// Parses a task from the JSON object returned by the backend.
-  ///
-  /// MongoDB stores the primary key as `_id`, so we explicitly map it here.
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
       id: json['_id'] as String,
@@ -30,6 +21,22 @@ class Task {
       description: json['description'] as String?,
       status: json['status'] as String,
       priority: json['priority'] as String? ?? 'medium',
+    );
+  }
+
+  Task copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? status,
+    String? priority,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      status: status ?? this.status,
+      priority: priority ?? this.priority,
     );
   }
 
@@ -45,10 +52,10 @@ class Task {
           priority == other.priority;
 
   @override
-  int get hashCode => 
-      id.hashCode ^ 
-      title.hashCode ^ 
-      (description?.hashCode ?? 0) ^ 
-      status.hashCode ^ 
+  int get hashCode =>
+      id.hashCode ^
+      title.hashCode ^
+      (description?.hashCode ?? 0) ^
+      status.hashCode ^
       priority.hashCode;
 }

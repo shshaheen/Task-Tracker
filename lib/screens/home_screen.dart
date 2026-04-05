@@ -93,11 +93,13 @@ class HomeScreen extends StatelessWidget {
         ),
         body: BlocBuilder<TaskBloc, TaskState>(
           builder: (context, state) {
-            if (state is TaskInitial || state is TaskLoading) {
+            final tasks = state is TaskLoaded ? state.tasks : <Task>[];
+
+            // Show a global loader ONLY during the very first fetch.
+            // If we have tasks already, keep the UI visible even if Loading.
+            if (state is TaskLoading && tasks.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
-
-            final tasks = state is TaskLoaded ? state.tasks : <Task>[];
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),

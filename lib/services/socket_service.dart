@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import '../models/task_model.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
 
@@ -51,16 +52,33 @@ class SocketService {
       debugPrint('[SocketService] Connection error: $err');
     });
 
-    // ── Domain events — each triggers a full re-fetch ──────────────────────
+    // ── Domain events — each triggers a local sync ────────────────────────
     //
-    // The server emits these after any CRUD operation so every connected
-    // client stays in sync without manual state merging.
-    for (final event in ['taskCreated', 'taskUpdated', 'taskDeleted']) {
-      _socket.on(event, (data) {
-        debugPrint('[SocketService] $event received');
-        taskBloc.add(const TaskEvent.fetchTasks());
-      });
-    }
+    // Instead of refetching the full list, we parse the incoming task
+    // and update the existing BLoC state directly for zero flickering.
+
+    _socket.on('taskCreated', (data) {
+      debugPrint('[SocketService] taskCreated received');
+      if (data is Map<String, dynamic>) {
+        taskBloc.add(TaskEvent.taskAddedLocally(task: Task.fromJson(data)));
+      }
+    });
+
+    _socket.on('taskUpdated', (data) {
+      debugPrint('[SocketService] taskUpdated received');
+      if (data is Map<String, dynamic>) {
+        taskBloc.add(TaskEvent.taskUpdatedLocally(task: Task.fromJson(data)));
+      }
+    });
+
+    _socket.on('taskDeleted', (data) {
+      debugPrint('[SocketService] taskDeleted received');
+      // For deletion, data might be the _id string or a map with _id.
+      final String? id = data is String ? data : data['_id'] as String?;
+      if (id != null) {
+        taskBloc.add(TaskEvent.taskDeletedLocally(id: id));
+      }
+    });
 
     _socket.connect();
   }

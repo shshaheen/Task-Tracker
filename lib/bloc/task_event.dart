@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../models/task_model.dart';
 
 part 'task_event.freezed.dart';
 
@@ -34,5 +35,10 @@ sealed class TaskEvent with _$TaskEvent {
 
   /// Permanently remove the task identified by [id].
   const factory TaskEvent.deleteTask({required String id}) = DeleteTask;
+
+  /// Optimistic / Real-time sync events
+  const factory TaskEvent.taskAddedLocally({required Task task}) = TaskAddedLocally;
+  const factory TaskEvent.taskUpdatedLocally({required Task task}) = TaskUpdatedLocally;
+  const factory TaskEvent.taskDeletedLocally({required String id}) = TaskDeletedLocally;
 }
 

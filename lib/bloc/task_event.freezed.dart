@@ -55,14 +55,17 @@ extension TaskEventPatterns on TaskEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTasks value)?  fetchTasks,TResult Function( AddTask value)?  addTask,TResult Function( UpdateTask value)?  updateTask,TResult Function( DeleteTask value)?  deleteTask,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTasks value)?  fetchTasks,TResult Function( AddTask value)?  addTask,TResult Function( UpdateTask value)?  updateTask,TResult Function( DeleteTask value)?  deleteTask,TResult Function( TaskAddedLocally value)?  taskAddedLocally,TResult Function( TaskUpdatedLocally value)?  taskUpdatedLocally,TResult Function( TaskDeletedLocally value)?  taskDeletedLocally,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks(_that);case AddTask() when addTask != null:
 return addTask(_that);case UpdateTask() when updateTask != null:
 return updateTask(_that);case DeleteTask() when deleteTask != null:
-return deleteTask(_that);case _:
+return deleteTask(_that);case TaskAddedLocally() when taskAddedLocally != null:
+return taskAddedLocally(_that);case TaskUpdatedLocally() when taskUpdatedLocally != null:
+return taskUpdatedLocally(_that);case TaskDeletedLocally() when taskDeletedLocally != null:
+return taskDeletedLocally(_that);case _:
   return orElse();
 
 }
@@ -80,14 +83,17 @@ return deleteTask(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTasks value)  fetchTasks,required TResult Function( AddTask value)  addTask,required TResult Function( UpdateTask value)  updateTask,required TResult Function( DeleteTask value)  deleteTask,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTasks value)  fetchTasks,required TResult Function( AddTask value)  addTask,required TResult Function( UpdateTask value)  updateTask,required TResult Function( DeleteTask value)  deleteTask,required TResult Function( TaskAddedLocally value)  taskAddedLocally,required TResult Function( TaskUpdatedLocally value)  taskUpdatedLocally,required TResult Function( TaskDeletedLocally value)  taskDeletedLocally,}){
 final _that = this;
 switch (_that) {
 case FetchTasks():
 return fetchTasks(_that);case AddTask():
 return addTask(_that);case UpdateTask():
 return updateTask(_that);case DeleteTask():
-return deleteTask(_that);}
+return deleteTask(_that);case TaskAddedLocally():
+return taskAddedLocally(_that);case TaskUpdatedLocally():
+return taskUpdatedLocally(_that);case TaskDeletedLocally():
+return taskDeletedLocally(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -101,14 +107,17 @@ return deleteTask(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTasks value)?  fetchTasks,TResult? Function( AddTask value)?  addTask,TResult? Function( UpdateTask value)?  updateTask,TResult? Function( DeleteTask value)?  deleteTask,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTasks value)?  fetchTasks,TResult? Function( AddTask value)?  addTask,TResult? Function( UpdateTask value)?  updateTask,TResult? Function( DeleteTask value)?  deleteTask,TResult? Function( TaskAddedLocally value)?  taskAddedLocally,TResult? Function( TaskUpdatedLocally value)?  taskUpdatedLocally,TResult? Function( TaskDeletedLocally value)?  taskDeletedLocally,}){
 final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks(_that);case AddTask() when addTask != null:
 return addTask(_that);case UpdateTask() when updateTask != null:
 return updateTask(_that);case DeleteTask() when deleteTask != null:
-return deleteTask(_that);case _:
+return deleteTask(_that);case TaskAddedLocally() when taskAddedLocally != null:
+return taskAddedLocally(_that);case TaskUpdatedLocally() when taskUpdatedLocally != null:
+return taskUpdatedLocally(_that);case TaskDeletedLocally() when taskDeletedLocally != null:
+return taskDeletedLocally(_that);case _:
   return null;
 
 }
@@ -125,13 +134,16 @@ return deleteTask(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchTasks,TResult Function( String title,  String? description,  String? priority)?  addTask,TResult Function( String id,  String? title,  String? description,  String? status,  String? priority)?  updateTask,TResult Function( String id)?  deleteTask,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchTasks,TResult Function( String title,  String? description,  String? priority)?  addTask,TResult Function( String id,  String? title,  String? description,  String? status,  String? priority)?  updateTask,TResult Function( String id)?  deleteTask,TResult Function( Task task)?  taskAddedLocally,TResult Function( Task task)?  taskUpdatedLocally,TResult Function( String id)?  taskDeletedLocally,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks();case AddTask() when addTask != null:
 return addTask(_that.title,_that.description,_that.priority);case UpdateTask() when updateTask != null:
 return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority);case DeleteTask() when deleteTask != null:
-return deleteTask(_that.id);case _:
+return deleteTask(_that.id);case TaskAddedLocally() when taskAddedLocally != null:
+return taskAddedLocally(_that.task);case TaskUpdatedLocally() when taskUpdatedLocally != null:
+return taskUpdatedLocally(_that.task);case TaskDeletedLocally() when taskDeletedLocally != null:
+return taskDeletedLocally(_that.id);case _:
   return orElse();
 
 }
@@ -149,13 +161,16 @@ return deleteTask(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchTasks,required TResult Function( String title,  String? description,  String? priority)  addTask,required TResult Function( String id,  String? title,  String? description,  String? status,  String? priority)  updateTask,required TResult Function( String id)  deleteTask,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchTasks,required TResult Function( String title,  String? description,  String? priority)  addTask,required TResult Function( String id,  String? title,  String? description,  String? status,  String? priority)  updateTask,required TResult Function( String id)  deleteTask,required TResult Function( Task task)  taskAddedLocally,required TResult Function( Task task)  taskUpdatedLocally,required TResult Function( String id)  taskDeletedLocally,}) {final _that = this;
 switch (_that) {
 case FetchTasks():
 return fetchTasks();case AddTask():
 return addTask(_that.title,_that.description,_that.priority);case UpdateTask():
 return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority);case DeleteTask():
-return deleteTask(_that.id);}
+return deleteTask(_that.id);case TaskAddedLocally():
+return taskAddedLocally(_that.task);case TaskUpdatedLocally():
+return taskUpdatedLocally(_that.task);case TaskDeletedLocally():
+return taskDeletedLocally(_that.id);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -169,13 +184,16 @@ return deleteTask(_that.id);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchTasks,TResult? Function( String title,  String? description,  String? priority)?  addTask,TResult? Function( String id,  String? title,  String? description,  String? status,  String? priority)?  updateTask,TResult? Function( String id)?  deleteTask,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchTasks,TResult? Function( String title,  String? description,  String? priority)?  addTask,TResult? Function( String id,  String? title,  String? description,  String? status,  String? priority)?  updateTask,TResult? Function( String id)?  deleteTask,TResult? Function( Task task)?  taskAddedLocally,TResult? Function( Task task)?  taskUpdatedLocally,TResult? Function( String id)?  taskDeletedLocally,}) {final _that = this;
 switch (_that) {
 case FetchTasks() when fetchTasks != null:
 return fetchTasks();case AddTask() when addTask != null:
 return addTask(_that.title,_that.description,_that.priority);case UpdateTask() when updateTask != null:
 return updateTask(_that.id,_that.title,_that.description,_that.status,_that.priority);case DeleteTask() when deleteTask != null:
-return deleteTask(_that.id);case _:
+return deleteTask(_that.id);case TaskAddedLocally() when taskAddedLocally != null:
+return taskAddedLocally(_that.task);case TaskUpdatedLocally() when taskUpdatedLocally != null:
+return taskUpdatedLocally(_that.task);case TaskDeletedLocally() when taskDeletedLocally != null:
+return taskDeletedLocally(_that.id);case _:
   return null;
 
 }
@@ -417,6 +435,204 @@ class _$DeleteTaskCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
   return _then(DeleteTask(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class TaskAddedLocally implements TaskEvent {
+  const TaskAddedLocally({required this.task});
+  
+
+ final  Task task;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TaskAddedLocallyCopyWith<TaskAddedLocally> get copyWith => _$TaskAddedLocallyCopyWithImpl<TaskAddedLocally>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskAddedLocally&&(identical(other.task, task) || other.task == task));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,task);
+
+@override
+String toString() {
+  return 'TaskEvent.taskAddedLocally(task: $task)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TaskAddedLocallyCopyWith<$Res> implements $TaskEventCopyWith<$Res> {
+  factory $TaskAddedLocallyCopyWith(TaskAddedLocally value, $Res Function(TaskAddedLocally) _then) = _$TaskAddedLocallyCopyWithImpl;
+@useResult
+$Res call({
+ Task task
+});
+
+
+
+
+}
+/// @nodoc
+class _$TaskAddedLocallyCopyWithImpl<$Res>
+    implements $TaskAddedLocallyCopyWith<$Res> {
+  _$TaskAddedLocallyCopyWithImpl(this._self, this._then);
+
+  final TaskAddedLocally _self;
+  final $Res Function(TaskAddedLocally) _then;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? task = null,}) {
+  return _then(TaskAddedLocally(
+task: null == task ? _self.task : task // ignore: cast_nullable_to_non_nullable
+as Task,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class TaskUpdatedLocally implements TaskEvent {
+  const TaskUpdatedLocally({required this.task});
+  
+
+ final  Task task;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TaskUpdatedLocallyCopyWith<TaskUpdatedLocally> get copyWith => _$TaskUpdatedLocallyCopyWithImpl<TaskUpdatedLocally>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskUpdatedLocally&&(identical(other.task, task) || other.task == task));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,task);
+
+@override
+String toString() {
+  return 'TaskEvent.taskUpdatedLocally(task: $task)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TaskUpdatedLocallyCopyWith<$Res> implements $TaskEventCopyWith<$Res> {
+  factory $TaskUpdatedLocallyCopyWith(TaskUpdatedLocally value, $Res Function(TaskUpdatedLocally) _then) = _$TaskUpdatedLocallyCopyWithImpl;
+@useResult
+$Res call({
+ Task task
+});
+
+
+
+
+}
+/// @nodoc
+class _$TaskUpdatedLocallyCopyWithImpl<$Res>
+    implements $TaskUpdatedLocallyCopyWith<$Res> {
+  _$TaskUpdatedLocallyCopyWithImpl(this._self, this._then);
+
+  final TaskUpdatedLocally _self;
+  final $Res Function(TaskUpdatedLocally) _then;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? task = null,}) {
+  return _then(TaskUpdatedLocally(
+task: null == task ? _self.task : task // ignore: cast_nullable_to_non_nullable
+as Task,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class TaskDeletedLocally implements TaskEvent {
+  const TaskDeletedLocally({required this.id});
+  
+
+ final  String id;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TaskDeletedLocallyCopyWith<TaskDeletedLocally> get copyWith => _$TaskDeletedLocallyCopyWithImpl<TaskDeletedLocally>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskDeletedLocally&&(identical(other.id, id) || other.id == id));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id);
+
+@override
+String toString() {
+  return 'TaskEvent.taskDeletedLocally(id: $id)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TaskDeletedLocallyCopyWith<$Res> implements $TaskEventCopyWith<$Res> {
+  factory $TaskDeletedLocallyCopyWith(TaskDeletedLocally value, $Res Function(TaskDeletedLocally) _then) = _$TaskDeletedLocallyCopyWithImpl;
+@useResult
+$Res call({
+ String id
+});
+
+
+
+
+}
+/// @nodoc
+class _$TaskDeletedLocallyCopyWithImpl<$Res>
+    implements $TaskDeletedLocallyCopyWith<$Res> {
+  _$TaskDeletedLocallyCopyWithImpl(this._self, this._then);
+
+  final TaskDeletedLocally _self;
+  final $Res Function(TaskDeletedLocally) _then;
+
+/// Create a copy of TaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
+  return _then(TaskDeletedLocally(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,
   ));
