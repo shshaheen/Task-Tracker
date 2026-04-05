@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/task_bloc.dart';
+import '../bloc/task_state.dart';
+import '../models/task_model.dart';
+import '../widgets/kanban_column.dart';
+import '../widgets/responsive_board.dart';
+import '../widgets/task_form_dialog.dart';
+
+// ---------------------------------------------------------------------------
+// HomeScreen — root screen, renders the full Kanban board.
+// ---------------------------------------------------------------------------
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  static const _columns = [
+    (label: 'To Do', status: 'todo', color: Color(0xFF757575)), 
+    (label: 'In Progress', status: 'inprogress', color: Color(0xFFF57C00)),
+    (label: 'Done', status: 'done', color: Color(0xFF388E3C)),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<TaskBloc, TaskState>(
+      // Show a SnackBar whenever the BLoC emits an error state.
+      listener: (context, state) {
+        if (state is TaskError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red.shade700,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF0F2F5),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF1565C0),
+          elevation: 0,
+          title: const Text(
+            'Task Tracker',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF1565C0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => const TaskFormDialog(),
+                ),
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text(
+                  'Add Task',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+        body: BlocBuilder<TaskBloc, TaskState>(
+          builder: (context, state) {
+            if (state is TaskInitial || state is TaskLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final tasks = state is TaskLoaded ? state.tasks : <Task>[];
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ResponsiveBoard(
+                columns: _columns
+                    .map(
+                      (col) => KanbanColumn(
+                        title: col.label,
+                        status: col.status,
+                        color: col.color,
+                        tasks: tasks, // column filters internally by status
+                      ),
+                    )
+                    .toList(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+}

@@ -34,7 +34,7 @@ const getAllTasks = async (req, res) => {
  */
 const createTask = async (req, res) => {
   try {
-    const { title, status } = req.body;
+    const { title, description, priority, status } = req.body;
 
     if (!title || !title.trim()) {
       return res
@@ -42,7 +42,7 @@ const createTask = async (req, res) => {
         .json({ success: false, message: "Title is required" });
     }
 
-    const task = await Task.create({ title: title.trim(), status });
+    const task = await Task.create({ title: title.trim(), description, priority, status });
 
     // Broadcast to every connected Socket.io client
     getIO(req).emit("taskCreated", task);
@@ -68,17 +68,24 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { title, description, status, priority } = req.body;
 
-    if (!status) {
+    // Filter fields to only update provided values
+    const updateData = {};
+    if (title !== undefined) updateData.title = title.trim();
+    if (description !== undefined) updateData.description = description.trim();
+    if (status !== undefined) updateData.status = status;
+    if (priority !== undefined) updateData.priority = priority;
+
+    if (Object.keys(updateData).length === 0) {
       return res
         .status(400)
-        .json({ success: false, message: "Status is required" });
+        .json({ success: false, message: "No updatable fields provided" });
     }
 
     const task = await Task.findByIdAndUpdate(
       id,
-      { status },
+      updateData,
       {
         new: true,          // return the updated document
         runValidators: true // enforce schema enum validation
