@@ -5,6 +5,7 @@ import '../bloc/task_event.dart';
 import '../models/task_model.dart';
 import 'board_scroll_provider.dart';
 import 'task_form_dialog.dart';
+import 'task_view_dialog.dart';
 
 // ---------------------------------------------------------------------------
 // TaskCard
@@ -85,14 +86,20 @@ class _CardBody extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
-        color: c.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4),
+        color: c.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: c.withValues(alpha: 0.2), width: 0.5),
       ),
       child: Text(
         priority.toUpperCase(),
-        style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: c.withValues(alpha: 0.8),
+          fontSize: 9,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -158,105 +165,174 @@ class _CardBody extends StatelessWidget {
     );
   }
 
+  PopupMenuItem<String> _buildPopupMenuItem({
+    required String value,
+    required String label,
+    required IconData icon,
+    Color? color,
+    required BuildContext context,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return PopupMenuItem<String>(
+      value: value,
+      height: 36,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: color ?? colorScheme.primary.withValues(alpha: 0.7),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: color ?? colorScheme.primary.withValues(alpha: 0.9),
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
       width: isDragging ? 220 : double.infinity,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            if (!isDragging) // hide when ghost is dragged
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+      child: GestureDetector(
+        onTap: isDragging
+            ? null
+            : () => showDialog(
+                context: context,
+                builder: (_) => TaskViewDialog(task: task),
               ),
-            if (isDragging) // slightly stronger shadow for the ghost
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 12, 0, 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 6, top: 2),
-                child: Icon(
-                  Icons.drag_indicator,
-                  size: 18,
-                  color: Colors.black26,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              if (!isDragging) // hide when ghost is dragged
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        height: 1.2,
-                      ),
-                    ),
-                    if (task.description != null &&
-                        task.description!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          task.description!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    _buildPriorityBadge(task.priority),
-                  ],
-                ),
-              ),
-              if (!isDragging)
-                PopupMenuButton<String>(
-                  padding: EdgeInsets.zero,
-                  icon: Icon(
-                    Icons.more_horiz,
-                    color: colorScheme.onSurface.withValues(alpha: 0.45),
-                    size: 18,
-                  ),
-                  onSelected: (value) {
-                    if (value == 'edit') {
-                      showDialog(
-                        context: context,
-                        builder: (_) => TaskFormDialog(taskToEdit: task),
-                      );
-                    } else if (value == 'delete') {
-                      _showDeleteConfirmation(context);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
+              if (isDragging) // slightly stronger shadow for the ghost
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
                 ),
             ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 10, 0, 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(right: 6, top: 2),
+                  child: Icon(
+                    Icons.drag_indicator,
+                    size: 18,
+                    color: Colors.black26,
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.title,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          height: 1.2,
+                        ),
+                      ),
+                      if (task.description != null &&
+                          task.description!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            task.description!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      _buildPriorityBadge(task.priority),
+                    ],
+                  ),
+                ),
+                if (!isDragging)
+                  PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    splashRadius: 18,
+                    offset: const Offset(0, 32),
+                    elevation: 3,
+                    color: colorScheme.surface,
+                    constraints: const BoxConstraints(minWidth: 100),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color: colorScheme.onSurface.withValues(alpha: 0.05),
+                        width: 1,
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: colorScheme.onSurface.withValues(alpha: 0.3),
+                      size: 18,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'view') {
+                        showDialog(
+                          context: context,
+                          builder: (_) => TaskViewDialog(task: task),
+                        );
+                      } else if (value == 'edit') {
+                        showDialog(
+                          context: context,
+                          builder: (_) => TaskFormDialog(taskToEdit: task),
+                        );
+                      } else if (value == 'delete') {
+                        _showDeleteConfirmation(context);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      _buildPopupMenuItem(
+                        value: 'view',
+                        label: 'View',
+                        icon: Icons.visibility_outlined,
+                        context: context,
+                      ),
+                      _buildPopupMenuItem(
+                        value: 'edit',
+                        label: 'Edit',
+                        icon: Icons.edit_outlined,
+                        context: context,
+                      ),
+                      const PopupMenuDivider(height: 1),
+                      _buildPopupMenuItem(
+                        value: 'delete',
+                        label: 'Delete',
+                        icon: Icons.delete_outline_rounded,
+                        color: Colors.red.shade600,
+                        context: context,
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
         ),
       ),
