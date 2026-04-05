@@ -10,7 +10,7 @@ import '../models/task_model.dart';
 // ---------------------------------------------------------------------------
 
 class TaskApiService {
-  static const String _baseUrl = 'http://172.16.44.222:8000/api';
+  static const String _baseUrl = 'https://task-tracker-1-pu1i.onrender.com/api';
 
   // Single shared Dio instance with base config applied once.
   final Dio _dio;

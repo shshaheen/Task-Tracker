@@ -19,7 +19,7 @@ import '../bloc/task_event.dart';
 // ---------------------------------------------------------------------------
 
 class SocketService {
-  static const String _serverUrl = 'http://172.16.44.222:8000';
+  static const String _serverUrl = 'https://task-tracker-1-pu1i.onrender.com';
 
   final TaskBloc taskBloc;
   late final io.Socket _socket;
