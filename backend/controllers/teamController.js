@@ -21,6 +21,15 @@ exports.getAllTeams = async (req, res) => {
 exports.createTeam = async (req, res) => {
   try {
     const { name, description } = req.body;
+
+    const existingTeam = await Team.findOne({ name });
+    if (existingTeam) {
+      return res.status(400).json({
+        success: false,
+        message: "Team with this name already exists",
+      });
+    }
+
     const newTeam = await Team.create({ name, description });
 
     res.status(201).json({

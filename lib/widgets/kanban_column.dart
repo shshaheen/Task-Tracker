@@ -54,7 +54,7 @@ class KanbanColumn extends StatelessWidget {
               TaskEvent.updateTask(
                 id: details.data.id,
                 status: status,
-                teamId: teamId, // Ensure it stays in this team or updates if moving across
+                teamId: teamId.isEmpty ? null : teamId,
               ),
             );
       },
