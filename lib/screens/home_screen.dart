@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   static const _columns = [
-    (label: 'To Do', status: 'todo', color: Color(0xFF757575)), 
+    (label: 'To Do', status: 'todo', color: Color(0xFF757575)),
     (label: 'In Progress', status: 'inprogress', color: Color(0xFFF57C00)),
     (label: 'Done', status: 'done', color: Color(0xFF388E3C)),
   ];
@@ -40,15 +40,28 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFFF0F2F5),
         appBar: AppBar(
-          backgroundColor: const Color(0xFF1565C0),
-          elevation: 0,
-          title: const Text(
-            'Task Tracker',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          elevation: 4,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage((DateTime.now().hour >= 6 && DateTime.now().hour < 18) ? "assets/day_sky.jpg" : "assets/night_sky.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
+          ),
+          title: Row(
+            children: const [
+              Icon(Icons.dashboard, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                'Task Tracker',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 21,
+                ),
+              ),
+            ],
           ),
           actions: [
             Padding(
@@ -56,9 +69,13 @@ class HomeScreen extends StatelessWidget {
               child: FilledButton.icon(
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF1565C0),
+                  foregroundColor: const Color(0xFF2563EB),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                 ),
                 onPressed: () => showDialog(
@@ -102,5 +119,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -33,20 +33,17 @@ class TaskCard extends StatelessWidget {
         ),
       ),
       // Dim the original card while it is being dragged
-      childWhenDragging: Opacity(
-        opacity: 0.35,
-        child: _CardBody(task: task),
-      ),
+      childWhenDragging: Opacity(opacity: 0.35, child: _CardBody(task: task)),
       onDragUpdate: (details) {
         final scrollProvider = BoardScrollProvider.of(context);
         if (scrollProvider == null) return;
-        
+
         final screenWidth = MediaQuery.of(context).size.width;
         final dx = details.globalPosition.dx;
-        
+
         const edgeSize = 80.0;
         const speed = 7.0; // 7 pixels per 16ms (~430px per second)
-        
+
         if (dx < edgeSize) {
           scrollProvider.startAutoScroll(-speed);
         } else if (dx > screenWidth - edgeSize) {
@@ -89,8 +86,14 @@ class _CardBody extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: c.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
-      child: Text(priority.toUpperCase(), style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.bold)),
+      decoration: BoxDecoration(
+        color: c.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        priority.toUpperCase(),
+        style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -107,7 +110,10 @@ class _CardBody extends StatelessWidget {
           children: [
             Icon(Icons.delete_outline_rounded, color: Colors.red.shade600),
             const SizedBox(width: 8),
-            const Text('Delete Task', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20)),
+            const Text(
+              'Delete Task',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+            ),
           ],
         ),
         contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
@@ -123,7 +129,10 @@ class _CardBody extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               foregroundColor: Colors.grey.shade700,
             ),
-            child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w600)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -133,11 +142,16 @@ class _CardBody extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               backgroundColor: Colors.red.shade600,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w600)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -177,7 +191,11 @@ class _CardBody extends StatelessWidget {
             children: [
               const Padding(
                 padding: EdgeInsets.only(right: 6, top: 2),
-                child: Icon(Icons.drag_indicator, size: 18, color: Colors.black26),
+                child: Icon(
+                  Icons.drag_indicator,
+                  size: 18,
+                  color: Colors.black26,
+                ),
               ),
               Expanded(
                 child: Column(
@@ -186,16 +204,23 @@ class _CardBody extends StatelessWidget {
                     Text(
                       task.title,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            height: 1.2,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                      ),
                     ),
-                    if (task.description != null && task.description!.isNotEmpty)
+                    if (task.description != null &&
+                        task.description!.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
                           task.description!,
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     _buildPriorityBadge(task.priority),
@@ -205,7 +230,11 @@ class _CardBody extends StatelessWidget {
               if (!isDragging)
                 PopupMenuButton<String>(
                   padding: EdgeInsets.zero,
-                  icon: Icon(Icons.more_horiz, color: colorScheme.onSurface.withValues(alpha: 0.45), size: 18),
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: colorScheme.onSurface.withValues(alpha: 0.45),
+                    size: 18,
+                  ),
                   onSelected: (value) {
                     if (value == 'edit') {
                       showDialog(
@@ -218,7 +247,13 @@ class _CardBody extends StatelessWidget {
                   },
                   itemBuilder: (context) => [
                     const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Colors.red))),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
                   ],
                 ),
             ],
@@ -228,4 +263,3 @@ class _CardBody extends StatelessWidget {
     );
   }
 }
-
