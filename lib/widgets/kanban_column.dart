@@ -51,11 +51,8 @@ class KanbanColumn extends StatelessWidget {
       // On drop: move the task to this column's status via the BLoC.
       onAcceptWithDetails: (details) {
         context.read<TaskBloc>().add(
-              TaskEvent.updateTask(
-                id: details.data.id,
-                status: status,
-              ),
-            );
+          TaskEvent.updateTask(id: details.data.id, status: status),
+        );
       },
 
       builder: (context, candidateData, _) {
@@ -63,20 +60,21 @@ class KanbanColumn extends StatelessWidget {
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          // margin: const EdgeInsets.symmetric(horizontal: 6), // Margin removed
           decoration: BoxDecoration(
             color: isHovering
-                ? color.withValues(alpha: 0.12)
-                : const Color(0xFFE4E7EB),
+                ? color.withValues(alpha: 0.15)
+                : Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isHovering ? color : Colors.transparent,
-              width: 2,
+              color: isHovering 
+                  ? color 
+                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
+              width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 8,
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -84,7 +82,11 @@ class KanbanColumn extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _ColumnHeader(title: title, color: color, count: columnTasks.length),
+              _ColumnHeader(
+                title: title,
+                color: color,
+                count: columnTasks.length,
+              ),
               _TaskList(tasks: columnTasks),
             ],
           ),
@@ -185,4 +187,3 @@ class _TaskList extends StatelessWidget {
     );
   }
 }
-

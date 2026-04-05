@@ -46,11 +46,14 @@ class TaskApiService {
     String? description,
     String? priority,
   }) async {
-    final response = await _dio.post('/tasks', data: {
-      'title': title,
-      if (description != null) 'description': description,
-      if (priority != null) 'priority': priority,
-    });
+    final response = await _dio.post(
+      '/tasks',
+      data: {
+        'title': title,
+        if (description != null) 'description': description,
+        if (priority != null) 'priority': priority,
+      },
+    );
 
     return Task.fromJson(response.data['data'] as Map<String, dynamic>);
   }

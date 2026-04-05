@@ -39,7 +39,7 @@ class _ResponsiveBoardState extends State<ResponsiveBoard> {
 
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
       if (!_scrollController.hasClients) return;
-      
+
       final maxExtent = _scrollController.position.maxScrollExtent;
       final newOffset = _scrollController.offset + _currentScrollSpeed;
 
@@ -74,17 +74,22 @@ class _ResponsiveBoardState extends State<ResponsiveBoard> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.columns.map((col) => SizedBox(
-                  width: constraints.maxWidth * 0.85, // Fill most of screen but tease next column
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: col,
-                  ),
-                )).toList(),
+                children: widget.columns
+                    .map(
+                      (col) => SizedBox(
+                        width:
+                            constraints.maxWidth *
+                            0.85, // Fill most of screen but tease next column
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: col,
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             );
           }
-          
           // Tablet layout: Scrollable row showing ~2 columns side-by-side
           else if (constraints.maxWidth < 1000) {
             return SingleChildScrollView(
@@ -93,29 +98,36 @@ class _ResponsiveBoardState extends State<ResponsiveBoard> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.columns.map((col) => SizedBox(
-                  width: constraints.maxWidth / 1.8,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: col,
-                  ),
-                )).toList(),
+                children: widget.columns
+                    .map(
+                      (col) => SizedBox(
+                        width: constraints.maxWidth / 1.8,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: col,
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             );
           }
-          
           // Desktop/Web layout: Static Row with Expanded columns
           else {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.columns.map((col) => Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: col,
-                  ),
-                )).toList(),
+                children: widget.columns
+                    .map(
+                      (col) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: col,
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             );
           }

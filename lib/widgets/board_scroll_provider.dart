@@ -27,4 +27,3 @@ class BoardScrollProvider extends InheritedWidget {
     return true; // Simple approach, functions are bound to state
   }
 }
-

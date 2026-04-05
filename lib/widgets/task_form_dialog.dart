@@ -7,7 +7,7 @@ import '../models/task_model.dart';
 // ---------------------------------------------------------------------------
 // TaskFormDialog
 //
-// A modernized, clean dialog for creating and editing tasks mirroring 
+// A modernized, clean dialog for creating and editing tasks mirroring
 // aesthetics from tools like Notion or Linear. Fixed overlapping labels.
 // ---------------------------------------------------------------------------
 
@@ -28,8 +28,12 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.taskToEdit?.title ?? '');
-    _descController = TextEditingController(text: widget.taskToEdit?.description ?? '');
+    _titleController = TextEditingController(
+      text: widget.taskToEdit?.title ?? '',
+    );
+    _descController = TextEditingController(
+      text: widget.taskToEdit?.description ?? '',
+    );
     _priority = widget.taskToEdit?.priority ?? 'medium';
   }
 
@@ -43,9 +47,9 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
   void _submit() {
     final title = _titleController.text.trim();
     if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Title cannot be empty')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Title cannot be empty')));
       return;
     }
 
@@ -53,32 +57,41 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
     final bloc = context.read<TaskBloc>();
 
     if (widget.taskToEdit == null) {
-      bloc.add(TaskEvent.addTask(
-        title: title,
-        description: desc.isEmpty ? null : desc,
-        priority: _priority,
-      ));
+      bloc.add(
+        TaskEvent.addTask(
+          title: title,
+          description: desc.isEmpty ? null : desc,
+          priority: _priority,
+        ),
+      );
     } else {
-      bloc.add(TaskEvent.updateTask(
-        id: widget.taskToEdit!.id,
-        title: title,
-        description: desc.isEmpty ? null : desc,
-        priority: _priority,
-        status: widget.taskToEdit!.status,
-      ));
+      bloc.add(
+        TaskEvent.updateTask(
+          id: widget.taskToEdit!.id,
+          title: title,
+          description: desc.isEmpty ? null : desc,
+          priority: _priority,
+          status: widget.taskToEdit!.status,
+        ),
+      );
     }
 
     Navigator.of(context).pop();
   }
 
-  Widget _buildLabeledField(String label, Widget fieldWidget) {
+  Widget _buildLabeledField(
+    String label,
+    Widget fieldWidget,
+    BuildContext context,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey.shade800,
+            color: colorScheme.onSurface.withValues(alpha: 0.8),
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -89,12 +102,16 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
     );
   }
 
-  InputDecoration _buildInputDecoration(String hint) {
+  InputDecoration _buildInputDecoration(String hint, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+      hintStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.45),
+        fontSize: 14,
+      ),
       filled: true,
-      fillColor: Colors.grey.shade100,
+      fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -110,8 +127,9 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
 
     return AlertDialog(
       elevation: 4,
-      shadowColor: Colors.black26,
-      surfaceTintColor: Colors.white,
+      shadowColor: Colors.black.withValues(alpha: 0.2),
+      surfaceTintColor: colorScheme.surface,
+      backgroundColor: colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
       title: Row(
@@ -124,7 +142,11 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
           const SizedBox(width: 8),
           Text(
             isEdit ? 'Edit Task' : 'New Task',
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+              color: colorScheme.onSurface,
+            ),
           ),
         ],
       ),
@@ -142,9 +164,16 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                   controller: _titleController,
                   autofocus: !isEdit,
                   textCapitalization: TextCapitalization.sentences,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                  decoration: _buildInputDecoration('Enter task title...'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSurface,
+                  ),
+                  decoration: _buildInputDecoration(
+                    'Enter task title...',
+                    context,
+                  ),
                 ),
+                context,
               ),
               const SizedBox(height: 18),
               _buildLabeledField(
@@ -153,23 +182,54 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                   controller: _descController,
                   textCapitalization: TextCapitalization.sentences,
                   maxLines: 3,
-                  style: const TextStyle(fontSize: 14),
-                  decoration: _buildInputDecoration('Add details...'),
+                  style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
+                  decoration: _buildInputDecoration('Add details...', context),
                 ),
+                context,
               ),
               const SizedBox(height: 18),
               _buildLabeledField(
                 'Priority',
                 DropdownButtonFormField<String>(
                   value: _priority,
-                  decoration: _buildInputDecoration(''),
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54),
-                  dropdownColor: Colors.white,
+                  decoration: _buildInputDecoration('', context),
+                  icon: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  dropdownColor: colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  items: const [
-                    DropdownMenuItem(value: 'low', child: Text('Low', style: TextStyle(fontWeight: FontWeight.w500))),
-                    DropdownMenuItem(value: 'medium', child: Text('Medium', style: TextStyle(fontWeight: FontWeight.w500))),
-                    DropdownMenuItem(value: 'high', child: Text('High', style: TextStyle(fontWeight: FontWeight.w500))),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'low',
+                      child: Text(
+                        'Low',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'medium',
+                      child: Text(
+                        'Medium',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'high',
+                      child: Text(
+                        'High',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
                   ],
                   onChanged: (val) {
                     if (val != null) {
@@ -177,6 +237,7 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                     }
                   },
                 ),
+                context,
               ),
             ],
           ),
@@ -188,16 +249,21 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
           onPressed: () => Navigator.of(context).pop(),
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            foregroundColor: Colors.grey.shade700,
+            foregroundColor: colorScheme.onSurfaceVariant,
           ),
-          child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w600)),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
         ),
         ElevatedButton(
           onPressed: _submit,
           style: ElevatedButton.styleFrom(
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
           ),
@@ -210,5 +276,3 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
     );
   }
 }
-
-

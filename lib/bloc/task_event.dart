@@ -37,8 +37,10 @@ sealed class TaskEvent with _$TaskEvent {
   const factory TaskEvent.deleteTask({required String id}) = DeleteTask;
 
   /// Optimistic / Real-time sync events
-  const factory TaskEvent.taskAddedLocally({required Task task}) = TaskAddedLocally;
-  const factory TaskEvent.taskUpdatedLocally({required Task task}) = TaskUpdatedLocally;
-  const factory TaskEvent.taskDeletedLocally({required String id}) = TaskDeletedLocally;
+  const factory TaskEvent.taskAddedLocally({required Task task}) =
+      TaskAddedLocally;
+  const factory TaskEvent.taskUpdatedLocally({required Task task}) =
+      TaskUpdatedLocally;
+  const factory TaskEvent.taskDeletedLocally({required String id}) =
+      TaskDeletedLocally;
 }
-

@@ -22,6 +22,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocListener<TaskBloc, TaskState>(
       // Show a SnackBar whenever the BLoC emits an error state.
       listener: (context, state) {
@@ -38,14 +40,21 @@ class HomeScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF0F2F5),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           elevation: 4,
           flexibleSpace: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage((DateTime.now().hour >= 6 && DateTime.now().hour < 18) ? "assets/day_sky.jpg" : "assets/night_sky.jpg"),
+                image: AssetImage(
+                  isDark ? "assets/night_sky.jpg" : "assets/day_sky.jpg",
+                ),
                 fit: BoxFit.cover,
+                // Add a subtle overlay so the title remains readable
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
+                  BlendMode.darken,
+                ),
               ),
             ),
           ),

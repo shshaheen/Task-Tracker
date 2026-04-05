@@ -36,38 +36,50 @@ class TaskViewDialog extends StatelessWidget {
 
   Color _getPriorityColor(String priority) {
     switch (priority.toLowerCase()) {
-      case 'high': return Colors.red.shade600;
-      case 'low': return Colors.green.shade600;
-      default: return Colors.orange.shade700;
+      case 'high':
+        return Colors.red.shade600;
+      case 'low':
+        return Colors.green.shade600;
+      default:
+        return Colors.orange.shade700;
     }
   }
 
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
-      case 'todo': return Colors.grey.shade600;
-      case 'inprogress': return Colors.blue.shade600;
-      case 'done': return Colors.green.shade700;
-      default: return Colors.grey.shade600;
+      case 'todo':
+        return Colors.grey.shade600;
+      case 'inprogress':
+        return Colors.blue.shade600;
+      case 'done':
+        return Colors.green.shade700;
+      default:
+        return Colors.grey.shade600;
     }
   }
 
   String _formatStatus(String status) {
     switch (status.toLowerCase()) {
-      case 'todo': return 'To Do';
-      case 'inprogress': return 'In Progress';
-      case 'done': return 'Done';
-      default: return status;
+      case 'todo':
+        return 'To Do';
+      case 'inprogress':
+        return 'In Progress';
+      case 'done':
+        return 'Done';
+      default:
+        return status;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       elevation: 8,
-      shadowColor: Colors.black26,
+      shadowColor: Colors.black.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
@@ -75,7 +87,7 @@ class TaskViewDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header with background/accent? Maybe just a clean title
+            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
               child: Column(
@@ -101,16 +113,16 @@ class TaskViewDialog extends StatelessWidget {
                     task.title,
                     style: textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: colorScheme.onSurface,
                       height: 1.2,
                     ),
                   ),
                 ],
               ),
             ),
-            
-            const Divider(height: 1),
-            
+
+            Divider(height: 1, color: colorScheme.outlineVariant),
+
             // Body / Description
             Flexible(
               child: SingleChildScrollView(
@@ -121,18 +133,27 @@ class TaskViewDialog extends StatelessWidget {
                     Text(
                       'DESCRIPTION',
                       style: textTheme.labelMedium?.copyWith(
-                        color: Colors.grey.shade500,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.7,
+                        ),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      task.description ?? 'No description provided for this task.',
+                      task.description ??
+                          'No description provided for this task.',
                       style: textTheme.bodyLarge?.copyWith(
-                        color: task.description == null ? Colors.grey.shade400 : Colors.black87,
+                        color: task.description == null
+                            ? colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.5,
+                              )
+                            : colorScheme.onSurface,
                         height: 1.6,
-                        fontStyle: task.description == null ? FontStyle.italic : null,
+                        fontStyle: task.description == null
+                            ? FontStyle.italic
+                            : null,
                       ),
                     ),
                   ],
@@ -140,7 +161,7 @@ class TaskViewDialog extends StatelessWidget {
               ),
             ),
 
-            const Divider(height: 1),
+            Divider(height: 1, color: colorScheme.outlineVariant),
 
             // Actions row
             Padding(
@@ -151,10 +172,16 @@ class TaskViewDialog extends StatelessWidget {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      foregroundColor: Colors.grey.shade600,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      foregroundColor: colorScheme.onSurfaceVariant,
                     ),
-                    child: const Text('Close', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: const Text(
+                      'Close',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
@@ -169,10 +196,15 @@ class TaskViewDialog extends StatelessWidget {
                     label: const Text('Edit Task'),
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ],

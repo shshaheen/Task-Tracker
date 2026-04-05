@@ -28,7 +28,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     // Sync handlers
     on<TaskAddedLocally>((event, emit) => _handleLocalAdd(event.task, emit));
-    on<TaskUpdatedLocally>((event, emit) => _handleLocalUpdate(event.task, emit));
+    on<TaskUpdatedLocally>(
+      (event, emit) => _handleLocalUpdate(event.task, emit),
+    );
     on<TaskDeletedLocally>((event, emit) => _handleLocalDelete(event.id, emit));
   }
 
@@ -149,14 +151,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // Don't add if already exists (avoids duplicates with optimistic UI)
     if (tasks.any((t) => t.id == task.id)) return;
 
-    // Remove any temp tasks that match this one (if we had a way to correlate, 
+    // Remove any temp tasks that match this one (if we had a way to correlate,
     // usually by title/description for new tasks)
     final filtered = tasks.where((t) => !t.id.startsWith('temp-')).toList();
     emit(TaskState.loaded(tasks: [...filtered, task]));
   }
 
   void _handleLocalUpdate(Task task, Emitter<TaskState> emit) {
-    final updated = _currentTasks.map((t) => t.id == task.id ? task : t).toList();
+    final updated = _currentTasks
+        .map((t) => t.id == task.id ? task : t)
+        .toList();
     emit(TaskState.loaded(tasks: updated));
   }
 

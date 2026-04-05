@@ -23,4 +23,3 @@ sealed class TaskState with _$TaskState {
   /// Something went wrong; [message] is shown in a SnackBar.
   const factory TaskState.error({required String message}) = TaskError;
 }
-

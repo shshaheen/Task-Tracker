@@ -216,18 +216,22 @@ class _CardBody extends StatelessWidget {
           decoration: BoxDecoration(
             color: colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: colorScheme.onSurface.withValues(alpha: 0.05),
+              width: 1,
+            ),
             boxShadow: [
-              if (!isDragging) // hide when ghost is dragged
+              if (!isDragging)
                 BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.08),
-                  blurRadius: 10,
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
-              if (isDragging) // slightly stronger shadow for the ghost
+              if (isDragging)
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
             ],
           ),
@@ -236,12 +240,12 @@ class _CardBody extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(right: 6, top: 2),
                   child: Icon(
                     Icons.drag_indicator,
                     size: 18,
-                    color: Colors.black26,
+                    color: colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                 ),
                 Expanded(
@@ -252,6 +256,7 @@ class _CardBody extends StatelessWidget {
                         task.title,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface,
                           height: 1.2,
                         ),
                       ),
@@ -264,7 +269,7 @@ class _CardBody extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: Colors.grey.shade600,
+                              color: colorScheme.onSurfaceVariant,
                               fontSize: 13,
                             ),
                           ),
