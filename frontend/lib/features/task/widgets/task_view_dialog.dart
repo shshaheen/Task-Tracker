@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/task_bloc.dart';
-import '../bloc/task_state.dart' as task_state;
 import '../models/task.dart';
 import '../../team/models/team.dart';
 import '../../team/bloc/team_bloc.dart';
@@ -202,12 +200,11 @@ class TaskViewDialog extends StatelessWidget {
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(24)),
+                            top: Radius.circular(24),
+                          ),
                         ),
-                        builder: (_) => TaskFormDialog(
-                          taskToEdit: task,
-                          teams: teams,
-                        ),
+                        builder: (_) =>
+                            TaskFormDialog(taskToEdit: task, teams: teams),
                       );
                     },
                     icon: const Icon(Icons.edit_outlined, size: 18),

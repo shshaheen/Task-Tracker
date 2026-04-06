@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../models/team.dart';
 
 part 'team_event.freezed.dart';
 

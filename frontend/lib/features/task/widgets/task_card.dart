@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
-import '../bloc/task_state.dart';
 import '../models/task.dart';
 import '../../team/models/team.dart';
 import '../../team/bloc/team_bloc.dart';
