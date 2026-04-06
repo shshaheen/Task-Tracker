@@ -5,7 +5,7 @@ import 'features/task/bloc/task_event.dart';
 import 'features/team/bloc/team_bloc.dart';
 import 'features/team/bloc/team_event.dart';
 import 'features/team/screens/teams_screen.dart';
-import 'services/socket_service.dart';
+import 'core/services/socket_service.dart';
 
 // ---------------------------------------------------------------------------
 // Entry point

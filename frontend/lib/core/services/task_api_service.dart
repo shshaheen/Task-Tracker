@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracker/features/task/models/task.dart';
 import 'package:task_tracker/features/team/models/team.dart';
-import '../core/configs/api_config.dart';
+import '../config/api_config.dart';
 
 class TaskApiService {
   static const String _baseUrl = ApiConfig.baseUrl;

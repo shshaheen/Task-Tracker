@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../services/task_api_service.dart';
+import '../../../core/services/task_api_service.dart';
 import '../models/task.dart';
 import 'task_event.dart';
 import 'task_state.dart';

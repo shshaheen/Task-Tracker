@@ -9,7 +9,7 @@ import '../../team/bloc/team_state.dart' as team_state;
 import '../widgets/kanban_column.dart';
 import '../widgets/responsive_board.dart';
 import '../widgets/task_form_dialog.dart';
-import '../../../services/socket_service.dart';
+import '../../../core/services/socket_service.dart';
 
 class TeamBoardScreen extends StatefulWidget {
   final Team? team; // null means 'All Tasks'

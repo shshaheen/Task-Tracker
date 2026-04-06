@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import '../features/task/models/task.dart';
-import '../features/task/bloc/task_bloc.dart';
-import '../features/task/bloc/task_event.dart';
-import '../core/configs/api_config.dart';
+import '../../features/task/models/task.dart';
+import '../../features/task/bloc/task_bloc.dart';
+import '../../features/task/bloc/task_event.dart';
+import '../config/api_config.dart';
 
 // ---------------------------------------------------------------------------
 // SocketService

@@ -49,6 +49,9 @@ The frontend is structured around **independent feature modules** such as **Team
 task-tracker/
 ├── frontend/                     # Flutter Mobile & Web application
 │   ├── lib/
+│   │   ├── core/                 # Shared core modules
+│   │   │   ├── config/          # App-wide configurations
+│   │   │   └── services/         # API & Socket.IO services
 │   │   ├── features/             # Feature-based modules
 │   │   │   ├── team/
 │   │   │   │   ├── bloc/         # Team state management
@@ -62,7 +65,6 @@ task-tracker/
 │   │   │       ├── screens/      # Kanban board UI
 │   │   │       └── widgets/      # Task UI components
 │   │   │
-│   │   ├── services/             # API services & Socket.IO client
 │   │   └── main.dart             # Application entry point
 │   │
 │   ├── assets/                   # Branding assets and images
@@ -125,23 +127,32 @@ MongoDB Atlas stores persistent data for teams and tasks using flexible document
 
 ## 🚀 Getting Started
 
+The project is pre-configured to connect to a **Live Production Backend** hosted on Render. You can run the Flutter app immediately without any local backend setup.
+
 ### 1. 📥 Clone the Repository
 ```bash
-git clone https://github.com/shaheenkolimi/task-tracker.git
-cd task-tracker
+git clone https://github.com/shshaheen/task_tracker.git
+cd task_tracker
 ```
 
-### 2. 📡 Backend Service
-1.  Navigate to directory: `cd backend`
-2.  Install dependencies: `npm install`
-3.  **Configure Environment**: Copy `.env.example` to `.env` and provide your `MONGO_URI`.
-4.  Start server: `npm run dev`
-
-### 📱 3. Flutter Frontend
+### 📱 2. Flutter Frontend (Quick Start)
 1.  Navigate to directory: `cd frontend`
 2.  Install dependencies: `flutter pub get`
-3.  **Model Generation**: Run `flutter pub run build_runner build` (if using Freezed/JSON serializable).
+3.  **Model Generation**: Run `flutter pub run build_runner build` (as we use Freezed).
 4.  Launch application: `flutter run`
+
+---
+
+## 🛠️ Local Development (Optional)
+
+If you wish to run the backend locally for development purposes:
+
+### 📡 Backend Service Setup
+1.  Navigate to directory: `cd backend`
+2.  Install dependencies: `npm install`
+3.  **Configure Environment**: Copy `.env.example` to `.env` and providing your own `MONGO_URI`.
+4.  Start server: `npm run dev`
+5.  **Update Frontend URL**: Change the `serverUrl` in `frontend/lib/core/configs/api_config.dart` to `http://localhost:8000`.
 
 ---
 
