@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracker/features/task/models/task.dart';
 import 'package:task_tracker/features/team/models/team.dart';
+import '../core/configs/api_config.dart';
 
 class TaskApiService {
-  static const String _baseUrl = 'https://task-tracker-1-pu1i.onrender.com/api';
+  static const String _baseUrl = ApiConfig.baseUrl;
 
   final Dio _dio;
 

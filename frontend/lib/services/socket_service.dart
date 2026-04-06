@@ -3,6 +3,7 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../features/task/models/task.dart';
 import '../features/task/bloc/task_bloc.dart';
 import '../features/task/bloc/task_event.dart';
+import '../core/configs/api_config.dart';
 
 // ---------------------------------------------------------------------------
 // SocketService
@@ -20,7 +21,7 @@ import '../features/task/bloc/task_event.dart';
 // ---------------------------------------------------------------------------
 
 class SocketService {
-  static const String _serverUrl = 'https://task-tracker-1-pu1i.onrender.com';
+  static const String _serverUrl = ApiConfig.serverUrl;
 
   final TaskBloc taskBloc;
   late final io.Socket _socket;
