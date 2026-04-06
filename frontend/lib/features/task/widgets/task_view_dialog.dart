@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/task_bloc.dart';
-import '../bloc/task_state.dart';
-import '../models/task_model.dart';
-import '../models/team_model.dart';
+import '../bloc/task_state.dart' as task_state;
+import '../models/task.dart';
+import '../../team/models/team.dart';
+import '../../team/bloc/team_bloc.dart';
+import '../../team/bloc/team_state.dart' as team_state;
 import 'task_form_dialog.dart';
 
 class TaskViewDialog extends StatelessWidget {
@@ -190,14 +192,17 @@ class TaskViewDialog extends StatelessWidget {
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
                     onPressed: () {
-                      final state = context.read<TaskBloc>().state;
-                      final teams = state is TaskLoaded ? state.teams : <Team>[];
+                      final teamState = context.read<TeamBloc>().state;
+                      final teams = teamState is team_state.TeamLoaded
+                          ? teamState.teams
+                          : <Team>[];
                       Navigator.pop(context); // Close view
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(24)),
                         ),
                         builder: (_) => TaskFormDialog(
                           taskToEdit: task,

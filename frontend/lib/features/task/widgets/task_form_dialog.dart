@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
-import '../models/task_model.dart';
-import '../models/team_model.dart';
+import '../models/task.dart';
+import '../../team/models/team.dart';
 
 class TaskFormDialog extends StatefulWidget {
   final Task? taskToEdit;
@@ -117,7 +117,8 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
     );
   }
 
-  InputDecoration _buildInputDecoration(String hint, BuildContext context, {String? errorText}) {
+  InputDecoration _buildInputDecoration(String hint, BuildContext context,
+      {String? errorText}) {
     final colorScheme = Theme.of(context).colorScheme;
     return InputDecoration(
       hintText: hint,
@@ -169,7 +170,7 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Header
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -190,7 +191,7 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Form contents in ScrollView so it doesn't overflow easily
             Flexible(
               child: SingleChildScrollView(
@@ -243,7 +244,8 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                         controller: _titleController,
                         autofocus: !isEdit,
                         onChanged: (val) {
-                          if (_titleError != null) setState(() => _titleError = null);
+                          if (_titleError != null)
+                            setState(() => _titleError = null);
                         },
                         textCapitalization: TextCapitalization.sentences,
                         style: TextStyle(
@@ -266,7 +268,8 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                         textCapitalization: TextCapitalization.sentences,
                         maxLines: 3,
                         style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
-                        decoration: _buildInputDecoration('Add details...', context),
+                        decoration:
+                            _buildInputDecoration('Add details...', context),
                       ),
                       context,
                     ),
@@ -327,7 +330,7 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                 ),
               ),
             ),
-            
+
             // Submitter Action Buttons
             Row(
               children: [
@@ -352,7 +355,8 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                     icon: Icon(isEdit ? Icons.save : Icons.add),
                     label: Text(
                       isEdit ? 'Save Changes' : 'Add Task',
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 16),
                     ),
                     style: ElevatedButton.styleFrom(
                       elevation: 0,

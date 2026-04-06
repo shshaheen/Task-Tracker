@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import '../models/task_model.dart';
-import '../bloc/task_bloc.dart';
-import '../bloc/task_event.dart';
+import '../features/task/models/task.dart';
+import '../features/task/bloc/task_bloc.dart';
+import '../features/task/bloc/task_event.dart';
 
 // ---------------------------------------------------------------------------
 // SocketService
@@ -10,7 +10,7 @@ import '../bloc/task_event.dart';
 // Maintains a persistent Socket.io connection to the backend.
 //
 // On every real-time event emitted by the server (taskCreated, taskUpdated,
-// taskDeleted) it dispatches FetchTasks to the TaskBloc so the board
+// taskDeleted) it dispatches local sync events to the TaskBloc so the board
 // refreshes automatically on ALL connected clients.
 //
 // Lifecycle:
@@ -73,7 +73,9 @@ class SocketService {
 
     _socket.on('taskDeleted', (data) {
       debugPrint('[SocketService] taskDeleted received: $data');
-      final String? id = data is String ? data : (data['id'] as String? ?? data['_id'] as String?);
+      final String? id = data is String
+          ? data
+          : (data['id'] as String? ?? data['_id'] as String?);
       if (id != null) {
         taskBloc.add(TaskEvent.taskDeletedLocally(id: id));
       }

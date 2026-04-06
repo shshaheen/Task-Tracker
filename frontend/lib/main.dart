@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/task_bloc.dart';
-import 'bloc/task_event.dart';
-import 'screens/home_screen.dart';
+import 'features/task/bloc/task_bloc.dart';
+import 'features/task/bloc/task_event.dart';
+import 'features/team/bloc/team_bloc.dart';
+import 'features/team/bloc/team_event.dart';
+import 'features/team/screens/teams_screen.dart';
 import 'services/socket_service.dart';
 
 // ---------------------------------------------------------------------------
@@ -17,10 +19,10 @@ void main() {
 // TaskTrackerApp — StatefulWidget so we can own the BLoC + Socket lifecycle.
 //
 // Flow:
-//   1. initState creates TaskBloc and immediately dispatches FetchTasks.
-//   2. SocketService connects; every server event triggers another FetchTasks.
-//   3. BlocProvider.value shares the bloc instance down the widget tree.
-//   4. dispose() closes both the socket and the bloc cleanly on app exit.
+//   1. initState creates Blocs and immediately dispatches Fetch events.
+//   2. SocketService connects; every server event triggers local sync.
+//   3. MultiBlocProvider shares the bloc instances down the widget tree.
+//   4. dispose() closes both the socket and the blocs cleanly on app exit.
 // ---------------------------------------------------------------------------
 
 class TaskTrackerApp extends StatefulWidget {
@@ -32,14 +34,16 @@ class TaskTrackerApp extends StatefulWidget {
 
 class _TaskTrackerAppState extends State<TaskTrackerApp> {
   late final TaskBloc _taskBloc;
+  late final TeamBloc _teamBloc;
   late final SocketService _socketService;
 
   @override
   void initState() {
     super.initState();
 
-    // Create the bloc and kick off the initial data load.
+    // Create the blocs and kick off the initial data load.
     _taskBloc = TaskBloc()..add(const TaskEvent.fetchTasks());
+    _teamBloc = TeamBloc()..add(const TeamEvent.fetchTeams());
 
     // Connect the socket; it will re-dispatch FetchTasks on every server event.
     _socketService = SocketService(taskBloc: _taskBloc)..connect();
@@ -49,6 +53,7 @@ class _TaskTrackerAppState extends State<TaskTrackerApp> {
   void dispose() {
     _socketService.dispose();
     _taskBloc.close();
+    _teamBloc.close();
     super.dispose();
   }
 
@@ -57,6 +62,7 @@ class _TaskTrackerAppState extends State<TaskTrackerApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _taskBloc),
+        BlocProvider.value(value: _teamBloc),
       ],
       child: RepositoryProvider.value(
         value: _socketService,
@@ -70,7 +76,8 @@ class _TaskTrackerAppState extends State<TaskTrackerApp> {
               seedColor: const Color(0xFF2563EB),
               brightness: Brightness.light,
               surface: const Color(0xFFFFFFFF),
-              surfaceContainer: const Color(0xFFF1F5F9), // Light blue-grey for columns
+              surfaceContainer:
+                  const Color(0xFFF1F5F9), // Light blue-grey for columns
               onSurface: const Color(0xFF1E293B),
             ),
             scaffoldBackgroundColor: const Color(0xFFF8FAFC), // Very light grey
@@ -86,7 +93,7 @@ class _TaskTrackerAppState extends State<TaskTrackerApp> {
             ),
             scaffoldBackgroundColor: const Color(0xFF020617), // Deepest dark
           ),
-          home: const HomeScreen(),
+          home: const TeamsScreen(),
         ),
       ),
     );

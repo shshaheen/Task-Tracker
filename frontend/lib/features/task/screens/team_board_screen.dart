@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/task_bloc.dart';
-import '../bloc/task_state.dart';
-import '../models/task_model.dart';
-import '../models/team_model.dart';
+import '../bloc/task_state.dart' as task_state;
+import '../models/task.dart';
+import '../../team/models/team.dart';
+import '../../team/bloc/team_bloc.dart';
+import '../../team/bloc/team_state.dart' as team_state;
 import '../widgets/kanban_column.dart';
 import '../widgets/responsive_board.dart';
 import '../widgets/task_form_dialog.dart';
-import '../services/socket_service.dart';
+import '../../../services/socket_service.dart';
 
 class TeamBoardScreen extends StatefulWidget {
   final Team? team; // null means 'All Tasks'
@@ -59,24 +61,28 @@ class _TeamBoardScreenState extends State<TeamBoardScreen> {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: BlocBuilder<TaskBloc, TaskState>(
+      body: BlocBuilder<TaskBloc, task_state.TaskState>(
         builder: (context, state) {
-          if (state is TaskLoading) {
+          if (state is task_state.TaskLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is TaskError) {
-            return Center(child: Text(state.message, style: const TextStyle(color: Colors.red)));
+          if (state is task_state.TaskError) {
+            return Center(
+                child: Text(state.message,
+                    style: const TextStyle(color: Colors.red)));
           }
 
-          final tasks = state is TaskLoaded ? state.tasks : <Task>[];
-          
+          final tasks = state is task_state.TaskLoaded ? state.tasks : <Task>[];
+
           List<Task> boardTasks;
           if (widget.team != null) {
-            boardTasks = tasks.where((t) => t.teamId == widget.team!.id).toList();
+            boardTasks =
+                tasks.where((t) => t.teamId == widget.team!.id).toList();
           } else {
             boardTasks = tasks;
           }
@@ -90,9 +96,7 @@ class _TeamBoardScreenState extends State<TeamBoardScreen> {
                   status: col.status,
                   color: col.color,
                   tasks: boardTasks,
-                  teamId: widget.team?.id ?? '', // If All Tasks, dragging is disabled or requires special handling. Handled in KanbanColumn if you pass empty teamId it may default somewhere. 
-                  // Wait, KanbanColumn currently accepts teamId for adding, etc. 
-                  // If teamId is empty, it might fail. But we can just pass the first team or empty.
+                  teamId: widget.team?.id ?? '',
                 );
               }).toList(),
             ),
@@ -101,9 +105,12 @@ class _TeamBoardScreenState extends State<TeamBoardScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          final currentState = context.read<TaskBloc>().state;
-          List<Team> teams = currentState is TaskLoaded ? currentState.teams : [];
-          String initialTeamId = widget.team?.id ?? (teams.isNotEmpty ? teams.first.id : '');
+          final teamBlocState = context.read<TeamBloc>().state;
+          List<Team> teams = teamBlocState is team_state.TeamLoaded
+              ? teamBlocState.teams
+              : [];
+          String initialTeamId =
+              widget.team?.id ?? (teams.isNotEmpty ? teams.first.id : '');
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,

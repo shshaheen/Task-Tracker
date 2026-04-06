@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import '../models/task_model.dart';
-import '../models/team_model.dart';
+import 'package:task_tracker/features/task/models/task.dart';
+import 'package:task_tracker/features/team/models/team.dart';
 
 class TaskApiService {
   static const String _baseUrl = 'https://task-tracker-1-pu1i.onrender.com/api';
@@ -106,5 +106,11 @@ class TaskApiService {
 
   Future<void> deleteTask(String id) async {
     await _dio.delete('/tasks/$id');
+  }
+
+  // ── DELETE /teams/:id ──────────────────────────────────────────────────────
+
+  Future<void> deleteTeam(String id) async {
+    await _dio.delete('/teams/$id');
   }
 }

@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
 import '../bloc/task_state.dart';
-import '../models/task_model.dart';
-import '../models/team_model.dart';
+import '../models/task.dart';
+import '../../team/models/team.dart';
+import '../../team/bloc/team_bloc.dart';
+import '../../team/bloc/team_state.dart' as team_state;
 import 'board_scroll_provider.dart';
 import 'task_form_dialog.dart';
 import 'task_view_dialog.dart';
@@ -210,9 +212,9 @@ class _CardBody extends StatelessWidget {
         onTap: isDragging
             ? null
             : () => showDialog(
-                context: context,
-                builder: (_) => TaskViewDialog(task: task),
-              ),
+                  context: context,
+                  builder: (_) => TaskViewDialog(task: task),
+                ),
         child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
@@ -257,10 +259,10 @@ class _CardBody extends StatelessWidget {
                       Text(
                         task.title,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface,
-                          height: 1.2,
-                        ),
+                              fontWeight: FontWeight.w500,
+                              color: colorScheme.onSurface,
+                              height: 1.2,
+                            ),
                       ),
                       if (task.description != null &&
                           task.description!.isNotEmpty)
@@ -307,13 +309,16 @@ class _CardBody extends StatelessWidget {
                           builder: (_) => TaskViewDialog(task: task),
                         );
                       } else if (value == 'edit') {
-                        final state = context.read<TaskBloc>().state;
-                        final teams = state is TaskLoaded ? state.teams : <Team>[];
+                        final teamState = context.read<TeamBloc>().state;
+                        final teams = teamState is team_state.TeamLoaded
+                            ? teamState.teams
+                            : <Team>[];
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24)),
                           ),
                           builder: (_) => TaskFormDialog(
                             taskToEdit: task,
