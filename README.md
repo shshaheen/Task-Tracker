@@ -39,28 +39,64 @@ Robust input validation and network error handling ensure that your data is safe
 
 ## 🏗️ Project Architecture
 
-The system follows a modern decoupled architecture, separating the real-time backend from the cross-platform frontend.
+The system follows a modular **feature-based architecture**, separating the real-time backend from the Flutter frontend while organizing frontend logic by domain.
+
+The frontend is structured around **independent feature modules** such as **Teams** and **Tasks**. Each feature contains its own state management, UI screens, and related widgets, making the codebase easier to scale and maintain.
 
 ### Folder Structure
+
 ```bash
 task-tracker/
-├── frontend/           # Flutter Mobile & Web application
-│   ├── lib/            # BLoC logic, UI widgets, and API services
-│   ├── assets/         # High-resolution branding and images
-│   └── test/           # Unit and widget test suites
-├── backend/            # Node.js + Express server
-│   ├── controllers/    # Business logic and Socket event emitters
-│   ├── models/         # MongoDB/Mongoose data schemas
-│   └── routes/         # RESTful API endpoint definitions
-├── docs/               # Architecture diagrams and technical specs
-├── .env.example        # Environment template for quick setup
-└── README.md           # Master documentation
+├── frontend/                     # Flutter Mobile & Web application
+│   ├── lib/
+│   │   ├── features/             # Feature-based modules
+│   │   │   ├── team/
+│   │   │   │   ├── bloc/         # Team state management
+│   │   │   │   ├── models/       # Team data models
+│   │   │   │   ├── screens/      # Team dashboard UI
+│   │   │   │   └── widgets/      # Reusable team widgets
+│   │   │   │
+│   │   │   └── task/
+│   │   │       ├── bloc/         # Task state management
+│   │   │       ├── models/       # Task data models
+│   │   │       ├── screens/      # Kanban board UI
+│   │   │       └── widgets/      # Task UI components
+│   │   │
+│   │   ├── services/             # API services & Socket.IO client
+│   │   └── main.dart             # Application entry point
+│   │
+│   ├── assets/                   # Branding assets and images
+│   └── test/                     # Unit and widget tests
+│
+├── backend/                      # Node.js + Express server
+│   ├── controllers/              # Business logic and Socket event emitters
+│   ├── models/                   # MongoDB/Mongoose schemas
+│   ├── routes/                   # REST API routes
+│   └── socket/                   # Real-time socket handlers
+│
+├── .env.example                  # Environment configuration template
+└── README.md
 ```
 
 ### Layer Responsibilities
-- **Frontend (UI/State)**: Uses the **BLoC pattern** to ensure business logic is entirely separated from the presentation layer. It manages optimistic UI updates for a snappy feel.
-- **Backend (API/Socket)**: Acts as the orchestrator. It manages the persistent state in MongoDB and broadcasts delta updates to the appropriate team rooms via Socket.IO.
-- **Database (Persistence)**: MongoDB Atlas provides a flexible, scalable document store for tasks and teams.
+
+**Feature Modules (Flutter)**
+Each feature module encapsulates its own UI, state management, and domain logic. This keeps the code modular and prevents unrelated concerns from being mixed together.
+
+**BLoC State Management**
+The application uses the **BLoC pattern** to separate business logic from UI.
+
+* `TeamBloc` manages team creation and retrieval.
+* `TaskBloc` handles task lifecycle operations such as creation, updates, deletion, and status transitions.
+
+**Backend API Layer**
+The Node.js backend provides RESTful endpoints for managing teams and tasks. It also emits socket events whenever task data changes.
+
+**Real-Time Synchronization**
+Using **Socket.IO**, any task update is broadcast to all connected clients within the same team workspace, ensuring every user sees the latest state instantly.
+
+**Database Layer**
+MongoDB Atlas stores persistent data for teams and tasks using flexible document schemas that allow the system to evolve without rigid migrations.
 
 ---
 
@@ -149,8 +185,8 @@ MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/tasktracker
 ## 👤 Author
 
 **Shaheen Kolimi**
-- **GitHub**: [@shaheenkolimi](https://github.com/shaheenkolimi)
-- **LinkedIn**: [Your Profile](https://linkedin.com/in/shaheenkolimi)
+- **GitHub**: [@shaheenkolimi](https://github.com/shshaheen)
+- **LinkedIn**: [Linkedin Profile](https://www.linkedin.com/in/shaheen-kolimi-409a43248)
 
 ---
 *Created with focus and precision for the project submission.*
